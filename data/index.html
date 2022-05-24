@@ -1,19 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servidor Web Esp8266</title>
-    <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
-    <h1 class="titulo">Servidor Web ESP8266</h1>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Triciclo</title>
+    <link rel="stylesheet" href="estilos.css" />
+  </head>
+  <body>
+    <h1 class="titulo">Triciclo</h1>
+    <nav>
+      <a href="#" class="logo"></a>
+      <ul>
+        <li class="nav-menu-item">
+          <a href="Velocidad" class="nav-menu-link">Velocidad</a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="Retroceso" class="nav-menu-link">Retroceso</a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="Configuracion" class="nav-menu-link">Configuracion</a>
+        </li>
+        <li class="nav-menu-item">
+          <a href="Nosotros" class="nav-menu-link">Nosotros</a>
+        </li>
+      </ul>
+    </nav>
     <div class="caja">
-        <p><button class="button button2" onclick=location.href="/RELE=ON"> Encender</button></p> 
-        <p><button class="button" onclick=location.href="/RELE=OFF" >Apagar</button></p> 
-        <p class="titulo">Estado: %ESTADO_RELE%</p>
+      <p>
+        <button class="button button2" onclick="location.href='/RELE=ON'">
+          Encender
+        </button>
+      </p>
+      <p>
+        <button class="button" onclick="location.href='/RELE=OFF'">
+          Apagar
+        </button>
+      </p>
+      <p class="titulo">Estado: %ESTADO_RELE%</p>
     </div>
-        
-</body>
+    <canvas id="dial"></canvas>
+    <script src="main.js"></script>
+  </body>
 </html>
