@@ -1,7 +1,7 @@
 //hacer mediicones diferenciales y agregar filtro RC a la entrada
 //bajar el SPS y mejor alimentarlo con 3,3v
 
-#include <Adafruit_ADS1015.h>
+//#include <Adafruit_ADS1015.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>

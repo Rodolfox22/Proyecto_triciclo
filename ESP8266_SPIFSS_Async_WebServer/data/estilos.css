@@ -5,15 +5,15 @@ body {
   background-color: rgb(143, 216, 245);
 }
 ul {
-  text-align: center;
+  text-align: left;
   list-style-type: none;
   margin: 0px;
   padding: 0px;
-  background: rgb(20, 124, 138);
   overflow: hidden;
+  background: rgb(20, 124, 138);
 }
 li {
-  float: left;
+  float: right;
 }
 li a {
   display: flex;
@@ -27,6 +27,40 @@ li a:visited {
 }
 li a:hover{
     background-color: cornflowerblue;
+}
+.logo{
+  font-size: 30px;
+  font-weight: bold;
+  padding: 0 40px;
+  line-height: 80px;
+}
+.nav{
+  background: rgb(20, 124, 138);
+  
+}
+.menu-nav{
+  display: flex;
+  margin-right: 0px;
+  list-style: none;
+  justify-content: space-between;
+  max-width: 992px;
+  margin: 0 auto;
+  line-height: 80px;
+}
+.nav-menu-item{
+  font-size: 18px;
+  margin: 0 10px;
+  line-height: 80 px;
+  text-transform: uppercase;
+  width: max-content;
+}
+.nav-menu-link{
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+.nav-menu-link:hover{
+  background-color: aqua;
+  transition: 0.5s;
 }
 .titulo {
   text-align: center;

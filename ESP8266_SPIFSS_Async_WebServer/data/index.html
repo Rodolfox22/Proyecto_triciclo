@@ -8,23 +8,6 @@
   </head>
   <body>
     <h1 class="titulo">Triciclo</h1>
-    <nav>
-      <a href="#" class="logo"></a>
-      <ul>
-        <li class="nav-menu-item">
-          <a href="Velocidad" class="nav-menu-link">Velocidad</a>
-        </li>
-        <li class="nav-menu-item">
-          <a href="Retroceso" class="nav-menu-link">Retroceso</a>
-        </li>
-        <li class="nav-menu-item">
-          <a href="Configuracion" class="nav-menu-link">Configuracion</a>
-        </li>
-        <li class="nav-menu-item">
-          <a href="Nosotros" class="nav-menu-link">Nosotros</a>
-        </li>
-      </ul>
-    </nav>
     <div class="caja">
       <p>
         <button class="button button2" onclick="location.href='/RELE=ON'">
@@ -38,6 +21,25 @@
       </p>
       <p class="titulo">Estado: %ESTADO_RELE%</p>
     </div>
+    <header class="nav">
+      <nav class="menu-nav">
+        <ul>
+          <a href="#" class="logo">Logo</a>
+          <li class="nav-menu-item">
+            <a href="Velocidad" class="nav-menu-link">Vel</a>
+          </li>
+          <li class="nav-menu-item">
+            <a href="Retroceso" class="nav-menu-link">Retr</a>
+          </li>
+          <li class="nav-menu-item">
+            <a href="Configuracion" class="nav-menu-link">Conf</a>
+          </li>
+          <li class="nav-menu-item">
+            <a href="Nosotros" class="nav-menu-link">Nos</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
     <canvas id="dial"></canvas>
     <script src="main.js"></script>
   </body>
