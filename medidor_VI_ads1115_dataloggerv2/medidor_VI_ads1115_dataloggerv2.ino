@@ -1,11 +1,11 @@
 //hacer mediicones diferenciales y agregar filtro RC a la entrada
 //bajar el SPS y mejor alimentarlo con 3,3v
 
-//#include <Adafruit_ADS1015.h>
+#include <Adafruit_ADS1015.h> //falta instalar libreria
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
-#include "RTClib.h"
+#include "RTClib.h" //falta instalar libreria
 RTC_DS1307 RTC;
 
 Adafruit_ADS1115 ads;
