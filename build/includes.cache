@@ -31,6 +31,11 @@
   },
   {
     "Sourcefile": "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\build\\sketch\\ESP8266_SPIFSS_Async_WebServer.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\Usuario\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.1\\libraries\\Wire"
+  },
+  {
+    "Sourcefile": "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\build\\sketch\\ESP8266_SPIFSS_Async_WebServer.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -181,6 +186,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\Usuario\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.1\\libraries\\Hash\\src\\Hash.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\Usuario\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.1\\libraries\\Wire\\Wire.cpp",
     "Include": "",
     "Includepath": null
   }

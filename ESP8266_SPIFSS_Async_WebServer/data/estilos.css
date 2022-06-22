@@ -20,25 +20,24 @@ li a {
   color: white;
   padding: 16px 16px;
   text-decoration: none;
-  border-right: 1px ;
+  border-right: 1px;
 }
 li a:visited {
-    color: whitesmoke;
+  color: whitesmoke;
 }
-li a:hover{
-    background-color: cornflowerblue;
+li a:hover {
+  background-color: cornflowerblue;
 }
-.logo{
+.logo {
   font-size: 30px;
   font-weight: bold;
   padding: 0 40px;
   line-height: 80px;
 }
-.nav{
+.nav {
   background: rgb(20, 124, 138);
-  
 }
-.menu-nav{
+.menu-nav {
   display: flex;
   margin-right: 0px;
   list-style: none;
@@ -47,28 +46,33 @@ li a:hover{
   margin: 0 auto;
   line-height: 80px;
 }
-.nav-menu-item{
+.nav-menu-item {
   font-size: 18px;
   margin: 0 10px;
   line-height: 80 px;
   text-transform: uppercase;
   width: max-content;
 }
-.nav-menu-link{
+.nav-menu-link {
   padding: 8px 12px;
   border-radius: 5px;
 }
-.nav-menu-link:hover{
-  background-color: aqua;
+.nav-menu-link:hover {
+  background-color: rgba(0, 174, 255, 0.815);
   transition: 0.5s;
 }
-.titulo {
+.titulo,
+.dato {
   text-align: center;
   font-family: Arial Black;
   font-weight: bold;
   font-size: 30px;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+}
+.dato {
+  margin: auto;
+  line-height: 80px;
 }
 .caja {
   background-color: var(--color-detalle);

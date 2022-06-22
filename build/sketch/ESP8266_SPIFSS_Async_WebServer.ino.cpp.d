@@ -45,7 +45,6 @@ c:\Users\Usuario\Documents\Arduino\Proyecto_triciclo\build\sketch\ESP8266_SPIFSS
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\cores\esp8266/debug.h \
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\variants\nodemcu/pins_arduino.h \
  c:\users\usuario\appdata\local\arduino15\packages\esp8266\hardware\esp8266\3.0.1\variants\generic\common.h \
- C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\cores\esp8266/arduino.h \
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\libraries\ESP8266WiFi\src/ESP8266WiFi.h \
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\cores\esp8266/wl_definitions.h \
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\cores\esp8266/IPAddress.h \
@@ -134,4 +133,6 @@ c:\Users\Usuario\Documents\Arduino\Proyecto_triciclo\build\sketch\ESP8266_SPIFSS
  C:\Program\ Files\ (x86)\Arduino\libraries\ESPAsyncWebServer-master\src/AsyncWebSocket.h \
  C:\Program\ Files\ (x86)\Arduino\libraries\ESPAsyncWebServer-master\src/AsyncWebSynchronization.h \
  C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\libraries\Hash\src/Hash.h \
- C:\Program\ Files\ (x86)\Arduino\libraries\ESPAsyncWebServer-master\src/AsyncEventSource.h
+ C:\Program\ Files\ (x86)\Arduino\libraries\ESPAsyncWebServer-master\src/AsyncEventSource.h \
+ C:\Users\Usuario\AppData\Local\Arduino15\packages\esp8266\hardware\esp8266\3.0.1\libraries\Wire/Wire.h \
+ c:\Users\Usuario\Documents\Arduino\Proyecto_triciclo\build\sketch\instrucciones.h
