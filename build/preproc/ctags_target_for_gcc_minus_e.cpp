@@ -3,18 +3,19 @@
 # 3 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino" 2
 # 4 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino" 2
 # 5 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino" 2
-# 6 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino" 2
+
+# 7 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino" 2
 
 const char *ssid = "UNRaf_Libre";
 const char *password = "unraf2021";
 /*
 
-const char *ssid = "xxx";
+const char *ssid = "xxxxxxxxx";
 
 const char *password = "yyyyyyy";
 
 */
-# 14 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
+# 15 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
 /*
 
 const char *ssid_AP = "Triciclo";
@@ -22,12 +23,15 @@ const char *ssid_AP = "Triciclo";
 const char *password_AP = "unraf2022";
 
 */
-# 18 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
+# 19 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
 IPAddress ip(192, 168, 0, 10);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 const int Rele_Pin = 2;
+
+unsigned long demora = 0;
+unsigned long tiempo_solicitud = 1000;
 
 String Estado_Pin;
 String Velocidad;
@@ -36,7 +40,7 @@ String Temperatura_bat;
 String Retroceso;
 String Humedad;
 String Temperatura;
-//String Estado_Pin;
+String Temporal;
 
 AsyncWebServer server(80);
 
@@ -58,32 +62,42 @@ String processor(const String &var)
 
   else if (var == "VELOCIDAD")
   {
-    Velocidad = leerDato('V');
+    Serial.print("Velocidad: ");
+    Serial.println(Velocidad);
+    return Velocidad;
   }
 
   else if (var == "HUMEDAD")
   {
-    Humedad = leerDato('H');
+    Serial.print("Velocidad: ");
+    Serial.println(Velocidad);
+    return Humedad;
   }
 
   else if (var == "TEMPERATURA_BAT")
   {
-    Temperatura_bat = leerDato('T');
+    Serial.print("Temperatura bateria: ");
+    Serial.println(Temperatura_bat);
+    return Temperatura_bat;
   }
 
   else if (var == "TEMPERATURA")
   {
-    Temperatura = leerDato('U');
+    Serial.print("Temperatura: ");
+    Serial.println(Temperatura);
+    return Temperatura;
   }
 
   else if (var == "RETROCESO")
   {
-    Retroceso = leerDato('R');
+    return Retroceso;
   }
 
   else if (var == "CARGA")
   {
-    Carga = leerDato('C');
+    Serial.print("Carga: ");
+    Serial.println(Carga);
+    return Carga;
   }
 }
 
@@ -100,8 +114,8 @@ void setup()
   }
   // Inicio I2C
   Wire.begin();
-  // Connect to Wi-Fi
 
+  // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid, password);
@@ -132,7 +146,7 @@ void setup()
       delay(1000);
 
     */
-# 119 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
+# 133 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
   // TODO como conectar directamente? necesita una instruccion especial para que funcione como servidor?
 
   // Route for root / web page
@@ -142,6 +156,10 @@ void setup()
   // Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/estilos.css", "text/css"); });
+
+  // Route to load main.js file
+  server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/main.js", "text/js"); });
 
   // Route to set GPIO to HIGH
   server.on("/RELE=ON", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -157,21 +175,50 @@ void setup()
 
   server.on("/TEMPERATURA_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
             {
+    Temperatura_bat = leerDato('T');
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  server.on("/TEMPERATURA", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    Temperatura = leerDato('U');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
             {
+    Humedad = leerDato('H');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/VELOCIDAD", HTTP_GET, [](AsyncWebServerRequest *request)
             {
+    Velocidad = leerDato('V');
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    Retroceso = leerDato('R');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    request->send(SPIFFS, "/index.html", String(), false, processor); });
+    Carga = leerDato('C');
+        request->send(SPIFFS, "/index.html", String(), false, processor); });
   server.begin();
 }
 void loop()
 {
+  unsigned long tiempo_inicio = 0;
+  unsigned long tiempo_fin = 0;
+  unsigned long tiempo_lectura = 0;
+
+  if (millis() - demora == tiempo_solicitud)
+  {
+    tiempo_inicio = millis();
+    dato_recibido = leerDato('C');
+    tiempo_fin = millis();
+    tiempo_lectura = tiempo_fin - tiempo_inicio;
+    Serial.print("Tiempo de lectura: ");
+    Serial.println(tiempo_lectura);
+    Serial.println(dato_recibido);
+    demora = millis();
+  }
 }

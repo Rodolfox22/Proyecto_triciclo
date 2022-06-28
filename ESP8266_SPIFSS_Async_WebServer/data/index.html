@@ -7,52 +7,98 @@
     <link rel="stylesheet" href="estilos.css" />
   </head>
   <body>
-    <h1 class="titulo">Triciclo</h1>
-    <div>
-      <p class="dato">
-        <i class="fas fa-tint" style="color: #00add6"></i>
-        <span class="dht-labels">Velocidad</span>
-        <span id="humidity">%VELOCIDAD%</span>
-        <sup class="units">km/h</sup>
-      </p>
-    </div>
-    <div>
-      <p class="dato">
-        <i class="fas fa-tint" style="color: #00add6"></i>
-        <span class="dht-labels">Bateria</span>
-        <span id="CARGA">%CARGA%</span>
-        <sup class="units">%</sup>
-      </p>
-    </div>
-    <div>
-      <p class="dato">Datos de la bateria</p>
-      <p class="dato">
-        <i class="fas fa-tint" style="color: #00add6"></i>
-        <span class="dht-labels">Temperatura</span>
-        <span id="temperatura_bat">%TEMPERATURA_BAT%</span>
-        <sup class="units">&deg; C</sup>
-      </p>
-    </div>
-    <div>
-      <p class="dato">
-        <i class="fas fa-tint" style="color: #00add6"></i>
-        <span class="dht-labels">Humedad</span>
-        <span id="humedad">%HUMEDAD%</span>
-        <sup class="units">%</sup>
-      </p>
+    <!--<h1 class="titulo">Triciclo</h1>-->
+    <div class="pantalla">
+      <div class="pantalla-clima">
+        <div class="clima">
+          <p class>
+            <span id="temperatura">%TEMPERATURA%</span>
+            <sup class="units">&deg; C</sup>
+          </p>
+        </div>
+        <div class="clima">
+          <p>
+            <span id="humedad">%HUMEDAD%</span>
+            <sup class="units">%</sup>
+          </p>
+        </div>
+      </div>
+      <div class="pantalla-principal">
+        <div class="flecha-izq" id="flecha-izq">
+          <div class="arrow-5 arrow-6 arrow-on"></div>
+          <!--%IZQUIERDA%-->
+        </div>
+        <div class="velocidad" id="velocidad">
+          <p class="dato">
+            <i class="fas fa-tint" style="color: #00add6"></i>
+            <span id="humidity">%VELOCIDAD%</span>
+            <sup class="units">km/h</sup>
+          </p>
+        </div>
+        <div class="flecha-der" id="flecha-der">
+          <div class="arrow-5 arrow-on"></div>
+          <!--%DERECHA%-->
+        </div>
+      </div>
+      <div class="pantalla-secundario">
+        <div class="datos-bateria">
+          <p class="subtitulo">Datos de la bateria</p>
+          <div>
+            <p class="dato-secundario">
+              <span id="CARGA">%CARGA%</span>
+              <sup class="units">%</sup>
+            </p>
+          </div>
+          <div>
+            <p class="dato-secundario">
+              <i class="fas fa-tint" style="color: #00add6"></i>
+              <span id="temperatura_bat">%TEMPERATURA_BAT%</span>
+              <sup class="units">&deg; C</sup>
+            </p>
+          </div>
+        </div>
+        <div class="datos-trip">
+          <div>
+            <p class="subtitulo">Trip</p>
+            <p class="dato-secundario">
+              <i class="fas fa-tint" style="color: #00add6"></i>
+              <span id="trip">%TRIP%</span>
+              <sup class="units">km</sup>
+            </p>
+          </div>
+          <div>
+            <p class="dato-secundario">
+              <i class="fas fa-tint" style="color: #00add6"></i>
+              <button class="button button3">Reiniciar</button>
+            </p>
+          </div>
+        </div>
+        <div class="datos-odometro">
+          <p class="subtitulo">Odometro</p>
+          <div>
+            <p class="dato-secundario">
+              <i class="fas fa-tint" style="color: #00add6"></i>
+              <span id="odometro">%ODOMETRO%</span>
+              <sup class="units">km</sup>
+            </p>
+          </div>
+        </div>
+        <!--<div class="caja">
+          <p>
+            <button class="button button2" onclick="location.href='/RELE=ON'">
+              Encender
+            </button>
+          </p>
+          <p>
+            <button class="button" onclick="location.href='/RELE=OFF'">
+              Apagar
+            </button>
+          </p>
+          <p class="titulo">Estado: %ESTADO_RELE%</p>
+        </div>-->
+      </div>
     </div>
   </body>
-  <div class="caja">
-    <p>
-      <button class="button button2" onclick="location.href='/RELE=ON'">
-        Encender
-      </button>
-    </p>
-    <p>
-      <button class="button" onclick="location.href='/RELE=OFF'">Apagar</button>
-    </p>
-    <p class="titulo">Estado: %ESTADO_RELE%</p>
-  </div>
 
   <!-- 
   var == "HUMEDAD") Humedad = leerDato("H"); 

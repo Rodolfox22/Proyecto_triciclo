@@ -2,12 +2,13 @@
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <Wire.h>
+
 #include "instrucciones.h"
 
 const char *ssid = "UNRaf_Libre";
 const char *password = "unraf2021";
 /*
-const char *ssid = "xxx";
+const char *ssid = "xxxxxxxxx";
 const char *password = "yyyyyyy";
 */
 
@@ -21,6 +22,9 @@ IPAddress subnet(255, 255, 255, 0);
 
 const int Rele_Pin = 2;
 
+unsigned long demora = 0;
+unsigned long tiempo_solicitud = 1000;
+
 String Estado_Pin;
 String Velocidad;
 String Carga;
@@ -28,7 +32,7 @@ String Temperatura_bat;
 String Retroceso;
 String Humedad;
 String Temperatura;
-// String Estado_Pin;
+String Temporal;
 
 AsyncWebServer server(80);
 
@@ -50,21 +54,29 @@ String processor(const String &var)
 
   else if (var == "VELOCIDAD")
   {
+    Serial.print("Velocidad: ");
+    Serial.println(Velocidad);
     return Velocidad;
   }
 
   else if (var == "HUMEDAD")
   {
+    Serial.print("Velocidad: ");
+    Serial.println(Velocidad);
     return Humedad;
   }
 
   else if (var == "TEMPERATURA_BAT")
   {
+    Serial.print("Temperatura bateria: ");
+    Serial.println(Temperatura_bat);
     return Temperatura_bat;
   }
 
   else if (var == "TEMPERATURA")
   {
+    Serial.print("Temperatura: ");
+    Serial.println(Temperatura);
     return Temperatura;
   }
 
@@ -75,6 +87,8 @@ String processor(const String &var)
 
   else if (var == "CARGA")
   {
+    Serial.print("Carga: ");
+    Serial.println(Carga);
     return Carga;
   }
 }
@@ -92,8 +106,8 @@ void setup()
   }
   // Inicio I2C
   Wire.begin();
-  // Connect to Wi-Fi
 
+  // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid, password);
@@ -117,8 +131,7 @@ void setup()
     */
 
   // TODO como conectar directamente? necesita una instruccion especial para que funcione como servidor?
-  
-  //?Rutas
+
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/index.html", String(), false, processor); });
@@ -126,6 +139,10 @@ void setup()
   // Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/estilos.css", "text/css"); });
+
+  // Route to load main.js file
+  server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/main.js", "text/js"); });
 
   // Route to set GPIO to HIGH
   server.on("/RELE=ON", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -167,9 +184,24 @@ void setup()
   server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     Carga = leerDato('C');
-    request->send(SPIFFS, "/index.html", String(), false, processor); });
+        request->send(SPIFFS, "/index.html", String(), false, processor); });
   server.begin();
 }
 void loop()
 {
+  unsigned long tiempo_inicio = 0;
+  unsigned long tiempo_fin = 0;
+  unsigned long tiempo_lectura = 0;
+
+  if (millis() - demora == tiempo_solicitud)
+  {
+    tiempo_inicio = millis();
+    dato_recibido = leerDato('C');
+    tiempo_fin = millis();
+    tiempo_lectura = tiempo_fin - tiempo_inicio;
+    Serial.print("Tiempo de lectura: ");
+    Serial.println(tiempo_lectura);
+    Serial.println(dato_recibido);
+    demora = millis();
+  }
 }

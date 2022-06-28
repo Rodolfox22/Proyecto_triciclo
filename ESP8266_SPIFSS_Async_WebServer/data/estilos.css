@@ -1,90 +1,48 @@
 :root {
-  --color-detalle: rgb(212, 241, 245);
+  --color-detalle: rgb(95, 228, 210);
+  --flecha-on: rgb(19, 177, 5);
+  --flecha-off: rgb(60, 102, 56);
+  --fondo: black;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
 body {
   background-color: rgb(143, 216, 245);
+  min-height: 100vh;
 }
-ul {
-  text-align: left;
-  list-style-type: none;
-  margin: 0px;
-  padding: 0px;
-  overflow: hidden;
-  background: rgb(20, 124, 138);
-}
-li {
-  float: right;
-}
-li a {
-  display: flex;
-  color: white;
-  padding: 16px 16px;
-  text-decoration: none;
-  border-right: 1px;
-}
-li a:visited {
-  color: whitesmoke;
-}
-li a:hover {
-  background-color: cornflowerblue;
-}
-.logo {
-  font-size: 30px;
-  font-weight: bold;
-  padding: 0 40px;
-  line-height: 80px;
-}
-.nav {
-  background: rgb(20, 124, 138);
-}
-.menu-nav {
-  display: flex;
-  margin-right: 0px;
-  list-style: none;
-  justify-content: space-between;
-  max-width: 992px;
-  margin: 0 auto;
-  line-height: 80px;
-}
-.nav-menu-item {
-  font-size: 18px;
-  margin: 0 10px;
-  line-height: 80 px;
-  text-transform: uppercase;
-  width: max-content;
-}
-.nav-menu-link {
-  padding: 8px 12px;
-  border-radius: 5px;
-}
-.nav-menu-link:hover {
-  background-color: rgba(0, 174, 255, 0.815);
-  transition: 0.5s;
-}
+
 .titulo,
-.dato {
+.dato,
+.subtitulo {
   text-align: center;
   font-family: Arial Black;
   font-weight: bold;
-  font-size: 30px;
+  font-size: 2rem;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
 }
+
 .dato {
   margin: auto;
   line-height: 80px;
 }
-.caja {
-  background-color: var(--color-detalle);
-  width: 340px;
-  margin: auto;
-  text-align: center;
-  border: var(--color-detalle) 5px solid;
-  border-radius: 30px;
+
+.subtitulo {
+  font-size: 1rem;
 }
+
 .button {
   background-color: rgb(209, 82, 73);
-  color: white;
+  color: rgb(218, 212, 212);
   width: 200px;
   height: 50px;
   border: var(--color-detalle);
@@ -102,5 +60,160 @@ li a:hover {
 }
 .button2:hover {
   background-color: rgb(36, 122, 36);
+  color: rgb(240, 239, 239);
+}
+.button3 {
+  background-color: rgb(69, 70, 69);
+}
+.button3:hover {
+  background-color: rgb(36, 122, 36);
   color: white;
+}
+
+/*Div principales*/
+
+.pantalla-clima {
+  background-color: rgb(155, 15, 15);
+  grid-area: "clima";
+  color: white;
+  margin: 0 auto;
+  width: 95%;
+  display: flex;
+  height: 1fr;
+  align-self: center;
+  justify-content: space-between;
+}
+
+.pantalla-clima > div {
+  margin: 5px 5px;
+  text-align: center;
+}
+
+.pantalla-principal {
+  grid-area: "principal";
+  background-color: black;
+  color: rgb(255, 255, 255);
+  margin: 0 auto;
+  width: 95%;
+  height: 3fr;
+  display: flex;
+}
+
+.flecha-der {
+  /*float: right;
+  text-align: right;*/
+  width: 15%;
+  margin-right: 10px;
+}
+
+.flecha-izq {
+  float: left;
+  width: 15%;
+  margin-left: 10px;
+}
+
+.velocidad {
+  background-color: grey;
+  width: 70%;
+  font-size: 20rem;
+  align-self: center;
+}
+
+.pantalla-secundario {
+  grid-area: "secundario";
+  margin: 0 auto;
+  width: 95%;
+  display: grid;
+  grid-template-areas:
+    "dato-bat  dato-trip"
+    "dato-odometro  dato-trip";
+  height: 3fr;
+}
+
+.datos-bateria {
+  grid-area: "dato-bat";
+  background-color: orange;
+}
+
+.datos-trip {
+  grid-area: "dato-trip";
+  background-color: #b86608;
+}
+
+.datos-odometro {
+  grid-area: "dato-odometro";
+  background-color: orange;
+}
+
+.pantalla-secundario > div {
+  color: white;
+  list-style: none;
+  text-align: center;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.pantalla {
+  display: grid;
+  grid-template-rows: 1fr 5fr 3fr;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.caja {
+  background-color: var(--color-detalle);
+  width: 300px;
+  margin: auto;
+  text-align: center;
+  border: var(--color-detalle) 5px solid;
+  border-radius: 30px;
+}
+
+/* -- ARROW 5      -- */
+
+.arrow-5 {
+  /* more triangle */
+  position: relative;
+  height: 0px;
+  width: 0px;
+  border: 12px solid;
+  border-color: var(--flecha-off) var(--flecha-off) transparent transparent;
+  transform: rotate(45deg);
+}
+
+.arrow-5:before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  display: block;
+  height: 12px;
+  width: 16px;
+  background-color: var(--flecha-off);
+  transform: rotate(-45deg) translate(2px, 1px);
+}
+
+/* -- ARROW 5      -- */
+
+.arrow-6 {
+  /* more triangle */
+  transform: rotate(-135deg);
+}
+
+.arrow-6:before {
+  transform: rotate(-45deg) translate(2px, 1px);
+}
+
+.arrow-on {
+  border-color: var(--flecha-on) var(--flecha-on) transparent transparent;
+}
+
+.arrow-on:before {
+  background-color: var(--flecha-on);
+}
+
+@media (min-width: 600px) {
+  .pantalla-secundario {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

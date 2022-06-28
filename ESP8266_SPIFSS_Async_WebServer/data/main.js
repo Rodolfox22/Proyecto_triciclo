@@ -40,7 +40,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/VELOCIDAD", true);
   xhttp.send();
-}, 500);
+}, 2000);
 
 setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -51,7 +51,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/RETROCESO", true);
   xhttp.send();
-}, 1000);
+}, 2000);
 
 setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -62,5 +62,5 @@ setInterval(function () {
   };
   xhttp.open("GET", "/CARGA", true);
   xhttp.send();
-}, 1000);
+}, 10000);
 
