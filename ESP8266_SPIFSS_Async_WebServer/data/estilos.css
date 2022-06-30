@@ -13,10 +13,11 @@
 
 html {
   height: 100%;
+  min-width: 500px;
+  background-color: black;
 }
 
 body {
-  background-color: rgb(143, 216, 245);
   min-height: 100vh;
 }
 
@@ -64,17 +65,20 @@ body {
 }
 .button3 {
   background-color: rgb(69, 70, 69);
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 18px;
 }
 .button3:hover {
-  background-color: rgb(36, 122, 36);
+  background-color: rgb(126, 134, 126);
   color: white;
 }
 
 /*Div principales*/
 
 .pantalla-clima {
-  background-color: rgb(155, 15, 15);
-  grid-area: "clima";
+  /*background-color: black;*/
   color: white;
   margin: 0 auto;
   width: 95%;
@@ -90,59 +94,63 @@ body {
 }
 
 .pantalla-principal {
-  grid-area: "principal";
-  background-color: black;
+  /*background-color: black;*/
   color: rgb(255, 255, 255);
   margin: 0 auto;
   width: 95%;
-  height: 3fr;
-  display: flex;
+  height: 5fr;
+  display: grid;
+  grid-template-columns: 1fr 4fr 1fr;
+  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
 }
 
+.flecha-izq,
 .flecha-der {
-  /*float: right;
-  text-align: right;*/
-  width: 15%;
-  margin-right: 10px;
-}
-
-.flecha-izq {
-  float: left;
-  width: 15%;
-  margin-left: 10px;
-}
-
-.velocidad {
-  background-color: grey;
-  width: 70%;
-  font-size: 20rem;
+  float: right;
+  text-align: center;
+  margin: auto 2em;
+  /*width: 1fr;*/
   align-self: center;
 }
 
+.velocidad {
+  /*background-color: black;*/
+  align-items: center;
+  justify-content: center;
+}
+
 .pantalla-secundario {
-  grid-area: "secundario";
   margin: 0 auto;
   width: 95%;
   display: grid;
-  grid-template-areas:
-    "dato-bat  dato-trip"
-    "dato-odometro  dato-trip";
-  height: 3fr;
+  min-height: 30vh;
+  align-items: center;
 }
 
+.datos-odometro,
 .datos-bateria {
-  grid-area: "dato-bat";
-  background-color: orange;
+  /*background-color: black;*/
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  margin: 0.2em;
 }
 
 .datos-trip {
-  grid-area: "dato-trip";
-  background-color: #b86608;
+  /*background-color: black;*/
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-content: center;
+  align-items: center;
+  margin: 0.2em;
 }
-
-.datos-odometro {
-  grid-area: "dato-odometro";
-  background-color: orange;
+.datos-odometro *,
+.datos-bateria *,
+.datos-trip * {
+  margin: 0.2em 0.2em;
 }
 
 .pantalla-secundario > div {
@@ -155,7 +163,7 @@ body {
 
 .pantalla {
   display: grid;
-  grid-template-rows: 1fr 5fr 3fr;
+  grid-template-rows: 1fr 3fr 3fr;
   overflow: hidden;
   min-height: 100vh;
 }
@@ -187,10 +195,10 @@ body {
   top: 0px;
   right: 0px;
   display: block;
-  height: 12px;
-  width: 16px;
+  height: 18px;
+  width: 24px;
   background-color: var(--flecha-off);
-  transform: rotate(-45deg) translate(2px, 1px);
+  transform: rotate(-45deg) translate(4px, 2px);
 }
 
 /* -- ARROW 5      -- */
@@ -198,10 +206,6 @@ body {
 .arrow-6 {
   /* more triangle */
   transform: rotate(-135deg);
-}
-
-.arrow-6:before {
-  transform: rotate(-45deg) translate(2px, 1px);
 }
 
 .arrow-on {
@@ -214,6 +218,32 @@ body {
 
 @media (min-width: 600px) {
   .pantalla-secundario {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
+    height: max-content;
+  }
+  .datos-bateria,
+  .datos-odometro {
+    /* display: grid;*/
+    grid-template-columns: none;
+    grid-template-rows: 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    margin: 0.2em 0.2em;
+  }
+  .datos-trip {
+    /*background-color: black;*/
+    grid-template-columns: none;
+    grid-template-rows: 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .velocidad * {
+    display: flex;
+    font-size: 3ch;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
   }
 }

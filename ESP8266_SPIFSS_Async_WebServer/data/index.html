@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="estilos.css" />
   </head>
   <body>
-    <!--<h1 class="titulo">Triciclo</h1>-->
     <div class="pantalla">
       <div class="pantalla-clima">
         <div class="clima">
@@ -26,23 +25,21 @@
       <div class="pantalla-principal">
         <div class="flecha-izq" id="flecha-izq">
           <div class="arrow-5 arrow-6 arrow-on"></div>
-          <!--%IZQUIERDA%-->
         </div>
-        <div class="velocidad" id="velocidad">
+        <div class="velocidad" >
           <p class="dato">
             <i class="fas fa-tint" style="color: #00add6"></i>
-            <span id="humidity">%VELOCIDAD%</span>
+            <span id="velocidad">%VEL%</span>
             <sup class="units">km/h</sup>
           </p>
         </div>
         <div class="flecha-der" id="flecha-der">
           <div class="arrow-5 arrow-on"></div>
-          <!--%DERECHA%-->
         </div>
       </div>
       <div class="pantalla-secundario">
         <div class="datos-bateria">
-          <p class="subtitulo">Datos de la bateria</p>
+          <p class="subtitulo">Bateria</p>
           <div>
             <p class="dato-secundario">
               <span id="CARGA">%CARGA%</span>
@@ -52,14 +49,14 @@
           <div>
             <p class="dato-secundario">
               <i class="fas fa-tint" style="color: #00add6"></i>
-              <span id="temperatura_bat">%TEMPERATURA_BAT%</span>
+              <span id="temp_bat">%TEMP_BAT%</span>
               <sup class="units">&deg; C</sup>
             </p>
           </div>
         </div>
         <div class="datos-trip">
+          <div class="subtitulo">Trip</div>
           <div>
-            <p class="subtitulo">Trip</p>
             <p class="dato-secundario">
               <i class="fas fa-tint" style="color: #00add6"></i>
               <span id="trip">%TRIP%</span>
@@ -69,12 +66,13 @@
           <div>
             <p class="dato-secundario">
               <i class="fas fa-tint" style="color: #00add6"></i>
-              <button class="button button3">Reiniciar</button>
+              <button class="button button3" onclick="location.href='/RELE=CHANGE'">Reiniciar</button>
             </p>
           </div>
         </div>
         <div class="datos-odometro">
-          <p class="subtitulo">Odometro</p>
+          <div class="subtitulo">Odometro</div>
+          <div class="subtitulo"></div>
           <div>
             <p class="dato-secundario">
               <i class="fas fa-tint" style="color: #00add6"></i>
@@ -102,7 +100,7 @@
 
   <!-- 
   var == "HUMEDAD") Humedad = leerDato("H"); 
-  var == "TEMPERATURA_BAT")  Temperatura_bat = leerDato("T"); 
+  var == "TEMP_BAT")  Temp_bat = leerDato("T"); 
   var == "TEMPERATURA") Temperatura =  leerDato("U"); 
   var == "RETROCESO") Retroceso = leerDato("R"); 
   var == "CARGA")  Carga = leerDato("C");

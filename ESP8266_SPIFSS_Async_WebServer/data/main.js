@@ -1,13 +1,13 @@
-setInterval(function () {
+/*setInterval(function () {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("temperatura_bat").innerHTML = this.responseText;
+      document.getElementById("temp_bat").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "/TEMPERATURA_BAT", true);
+  xhttp.open("GET", "/TEMP_BAT", true);
   xhttp.send();
-}, 10000);
+}, 10000);*/
 
 setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -18,9 +18,9 @@ setInterval(function () {
   };
   xhttp.open("GET", "/TEMPERATURA", true);
   xhttp.send();
-}, 10000);
+}, 5000);
 
-setInterval(function () {
+/*setInterval(function () {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -38,11 +38,11 @@ setInterval(function () {
       document.getElementById("velocidad").innerHTML = this.responseText;
     }
   };
-  xhttp.open("GET", "/VELOCIDAD", true);
+  xhttp.open("GET", "/VEL", true);
   xhttp.send();
-}, 2000);
+}, 2000);*/
 
-setInterval(function () {
+/*setInterval(function () {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -51,9 +51,9 @@ setInterval(function () {
   };
   xhttp.open("GET", "/RETROCESO", true);
   xhttp.send();
-}, 2000);
+}, 2000);*/
 
-setInterval(function () {
+/*setInterval(function () {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -62,5 +62,5 @@ setInterval(function () {
   };
   xhttp.open("GET", "/CARGA", true);
   xhttp.send();
-}, 10000);
+}, 10000);*/
 

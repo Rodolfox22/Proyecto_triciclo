@@ -30,12 +30,3 @@ String leerDato(char dato)
   return palabra;
 }
 
-String leerVariable(String variable){
-//int posicion=indexOf(variable, dato_recibido);
-for (int i = 0; i < 4; i++)
-{
-  /* code */
-}
-
-return "No encontrado";
-}

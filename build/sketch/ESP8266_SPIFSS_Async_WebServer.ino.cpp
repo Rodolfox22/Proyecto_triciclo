@@ -25,15 +25,15 @@ IPAddress subnet(255, 255, 255, 0);
 const int Rele_Pin = 2;
 
 unsigned long demora = 0;
-unsigned long tiempo_solicitud = 1000;
+unsigned long tiempo_solicitud = 5000;
 
 String Estado_Pin;
-String Velocidad;
-String Carga;
-String Temperatura_bat;
+String Velocidad = "10";
+String Carga = "20";
+String Temp_bat = "35";
 String Retroceso;
-String Humedad;
-String Temperatura;
+String Humedad = "75";
+String Temperatura = "10";
 String Temporal;
 
 AsyncWebServer server(80);
@@ -42,7 +42,7 @@ AsyncWebServer server(80);
 String processor(const String &var);
 #line 96 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
 void setup();
-#line 190 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
+#line 199 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
 void loop();
 #line 39 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
 String processor(const String &var)
@@ -61,7 +61,7 @@ String processor(const String &var)
     return Estado_Pin;
   }
 
-  else if (var == "VELOCIDAD")
+  else if (var == "VEL")
   {
     Serial.print("Velocidad: ");
     Serial.println(Velocidad);
@@ -75,11 +75,11 @@ String processor(const String &var)
     return Humedad;
   }
 
-  else if (var == "TEMPERATURA_BAT")
+  else if (var == "TEMP_BAT")
   {
     Serial.print("Temperatura bateria: ");
-    Serial.println(Temperatura_bat);
-    return Temperatura_bat;
+    Serial.println(Temp_bat);
+    return Temp_bat;
   }
 
   else if (var == "TEMPERATURA")
@@ -165,35 +165,44 @@ void setup()
     digitalWrite(Rele_Pin, HIGH);    
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  server.on("/TEMPERATURA_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
+  // Route to set GPIO to CHANGE
+  server.on("/RELE=CHANGE", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    if (digitalRead(Rele_Pin)==0)
+      digitalWrite(Rele_Pin, HIGH);    
+    else
+      digitalWrite(Rele_Pin, LOW);    
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  server.on("/TEMP_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
             { 
-    Temperatura_bat = leerDato('T');
+    //Temp_bat = leerDato('T');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/TEMPERATURA", HTTP_GET, [](AsyncWebServerRequest *request)
             { 
-    Temperatura = leerDato('U');
+    //Temperatura = leerDato('U');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
             { 
-    Humedad = leerDato('H');
+    //Humedad = leerDato('H');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/VELOCIDAD", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    Velocidad = leerDato('V');
+    //Velocidad = leerDato('V');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    Retroceso = leerDato('R');
+    //Retroceso = leerDato('R');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    Carga = leerDato('C');
-        request->send(SPIFFS, "/index.html", String(), false, processor); });
+    //Carga = leerDato('C');
+    request->send(SPIFFS, "/index.html", String(), false, processor); });
   server.begin();
 }
 void loop()
@@ -203,15 +212,17 @@ void loop()
   unsigned long tiempo_lectura = 0;
 
   if (millis() - demora == tiempo_solicitud)
-  {
+  {/*
     tiempo_inicio = millis();
+
     dato_recibido = leerDato('C');
+
     tiempo_fin = millis();
     tiempo_lectura = tiempo_fin - tiempo_inicio;
     Serial.print("Tiempo de lectura: ");
     Serial.println(tiempo_lectura);
-    Serial.println(dato_recibido);
-    demora = millis();
+    Serial.println("Datos: ", dato_recibido);
+    demora = millis();*/
   }
 }
 
