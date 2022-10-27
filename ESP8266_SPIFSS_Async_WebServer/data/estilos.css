@@ -38,7 +38,7 @@ body {
 }
 
 .subtitulo {
-  font-size: 1rem;
+  font-size: 2vw;
 }
 
 .button {
@@ -49,7 +49,7 @@ body {
   border: var(--color-detalle);
   border-radius: 15px;
   font-family: fantasy;
-  font-size: 30px;
+  font-size: 2vw;
   transition-duration: 0.4s;
 }
 .button:hover {
@@ -91,6 +91,7 @@ body {
 .pantalla-clima > div {
   margin: 5px 5px;
   text-align: center;
+  font-size: 1.5vw;
 }
 
 .pantalla-principal {
@@ -111,14 +112,17 @@ body {
   float: right;
   text-align: center;
   margin: auto 2em;
-  /*width: 1fr;*/
   align-self: center;
 }
 
 .velocidad {
-  /*background-color: black;*/
   align-items: center;
   justify-content: center;
+}
+.velocidad * {
+  align-items: center;
+  justify-content: center;
+  font-size: 5vw;
 }
 
 .pantalla-secundario {
@@ -145,19 +149,19 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
-  margin: 0.2em;
+  margin:5px;
 }
 .datos-odometro *,
 .datos-bateria *,
 .datos-trip * {
-  margin: 0.2em 0.2em;
+  margin: 5px 5px;
 }
 
 .pantalla-secundario > div {
   color: white;
   list-style: none;
   text-align: center;
-  font-size: 1rem;
+  font-size: 2.5vw;
   text-decoration: none;
 }
 
@@ -241,7 +245,6 @@ body {
 
   .velocidad * {
     display: flex;
-    font-size: 3ch;
     align-self: center;
     align-items: center;
     justify-content: center;

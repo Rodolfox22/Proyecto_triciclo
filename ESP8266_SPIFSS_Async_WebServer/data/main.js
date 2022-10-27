@@ -9,7 +9,7 @@
   xhttp.send();
 }, 10000);*/
 
-setInterval(function () {
+/*setInterval(function () {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
@@ -18,7 +18,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/TEMPERATURA", true);
   xhttp.send();
-}, 5000);
+}, 5000);*/
 
 /*setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -29,7 +29,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/HUMEDAD", true);
   xhttp.send();
-}, 10000);
+}, 10000);*/
 
 setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -40,7 +40,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/VEL", true);
   xhttp.send();
-}, 2000);*/
+}, 5000);
 
 /*setInterval(function () {
   var xhttp = new XMLHttpRequest();

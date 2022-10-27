@@ -35,11 +35,14 @@ unsigned long tiempo_solicitud = 5000;
 
 String Estado_Pin;
 String Velocidad = "10";
+int num_Velocidad = 0;
 String Carga = "20";
 String Temp_bat = "35";
 String Retroceso;
 String Humedad = "75";
 String Temperatura = "10";
+String Trip = "52";
+String Odometro = "720";
 String Temporal;
 
 AsyncWebServer server(80);
@@ -70,7 +73,7 @@ String processor(const String &var)
   else if (var == "HUMEDAD")
   {
     Serial.print("Velocidad: ");
-    Serial.println(Velocidad);
+    Serial.println(Humedad);
     return Humedad;
   }
 
@@ -98,6 +101,18 @@ String processor(const String &var)
     Serial.print("Carga: ");
     Serial.println(Carga);
     return Carga;
+  }
+  else if (var == "ODOMETRO")
+  {
+    Serial.print("Odometro: ");
+    Serial.println(Odometro);
+    return Odometro;
+  }
+  else if (var == "TRIP")
+  {
+    Serial.print("Trip: ");
+    Serial.println(Trip);
+    return Trip;
   }
 }
 
@@ -146,7 +161,7 @@ void setup()
       delay(1000);
 
     */
-# 133 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
+# 148 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
   // TODO como conectar directamente? necesita una instruccion especial para que funcione como servidor?
 
   // Route for root / web page
@@ -197,9 +212,20 @@ void setup()
     //Humedad = leerDato('H');
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  server.on("/VELOCIDAD", HTTP_GET, [](AsyncWebServerRequest *request)
+  server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
             {
-    //Velocidad = leerDato('V');
+              Serial.println(millis());
+if (millis()-demora>=tiempo_solicitud)
+{
+  demora = millis();
+  num_Velocidad ++;
+  if (num_Velocidad >= 25)
+  {
+    num_Velocidad = 1;
+  }
+    Velocidad = String(num_Velocidad);
+}
+
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -215,32 +241,4 @@ void setup()
 }
 void loop()
 {
-  unsigned long tiempo_inicio = 0;
-  unsigned long tiempo_fin = 0;
-  unsigned long tiempo_lectura = 0;
-
-  if (millis() - demora == tiempo_solicitud)
-  {/*
-
-    tiempo_inicio = millis();
-
-
-
-    dato_recibido = leerDato('C');
-
-
-
-    tiempo_fin = millis();
-
-    tiempo_lectura = tiempo_fin - tiempo_inicio;
-
-    Serial.print("Tiempo de lectura: ");
-
-    Serial.println(tiempo_lectura);
-
-    Serial.println("Datos: ", dato_recibido);
-
-    demora = millis();*/
-# 217 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\ESP8266_SPIFSS_Async_WebServer.ino"
-  }
 }
