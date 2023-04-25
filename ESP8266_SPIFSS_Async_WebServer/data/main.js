@@ -40,7 +40,7 @@ setInterval(function () {
   };
   xhttp.open("GET", "/VEL", true);
   xhttp.send();
-}, 5000);
+}, 2000);
 
 /*setInterval(function () {
   var xhttp = new XMLHttpRequest();
@@ -63,4 +63,3 @@ setInterval(function () {
   xhttp.open("GET", "/CARGA", true);
   xhttp.send();
 }, 10000);*/
-

@@ -1,7 +1,7 @@
 // hacer mediicones diferenciales y agregar filtro RC a la entrada
 // bajar el SPS y mejor alimentarlo con 3,3v
 
-#include <Adafruit_ADS1x15.h>
+// #include <Adafruit_ADS1015.h>
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
@@ -9,7 +9,7 @@
 #include "encabezados.h"
 
 RTC_DS1307 RTC;
-Adafruit_ADS1115 ads;
+// Adafruit_ADS1115 ads;
 
 void setup()
 {
@@ -33,10 +33,11 @@ void setup()
   if (!SD.begin(chipSelect))
   {
     Serial.println("Fallo la tarjeta, o no esta presente");
-    while (1)
-      continue;
+    // while (1)
+    //  continue;
   }
-  Serial.println("Tarjeta inicializada.");
+  else
+    Serial.println("Tarjeta inicializada.");
 
   ////////////ADC///////////
   // Factor de escala
@@ -45,9 +46,11 @@ void setup()
   // ads.setGain(GAIN_TWO);       // 2x gain   +/- 2.048V  1 bit = 1mV      0.0625mV
   // ads.setGain(GAIN_FOUR);      // 4x gain   +/- 1.024V  1 bit = 0.5mV    0.03125mV
   // ads.setGain(GAIN_EIGHT);     // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
-  ads.setGain(GAIN_SIXTEEN); // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
-  ads.begin();               // Iniciar el ADS1115
-  ads.setSPS(ADS1115_DR_16SPS);
+
+  //  ads.setGain(GAIN_SIXTEEN); // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
+  //  ads.begin();               // Iniciar el ADS1115
+  //  ads.setSPS(ADS1115_DR_16SPS);
+
   //  if (!ads.begin()) {
   //    Serial.println("Failed to initialize ADS.");
   //    while (1);
@@ -56,8 +59,8 @@ void setup()
   //    Serial.println("ADS initialized.");
   //  }
 
-  /////////CONTADOR////////
-  attachInterrupt(digitalPinToInterrupt(3), contador_pulsos, RISING);
+  /////////   CONTADOR   ////////
+  attachInterrupt(digitalPinToInterrupt(3), contadorPulsos, RISING);
 
   // Inicializa la lectura de datos
   for (int i = 0; i < CANTDATOS; i++)
@@ -70,10 +73,36 @@ void loop()
 {
   TiempoImprime = millis() - UltimoTiempoImprime;
   if (TiempoImprime > DeltaTImprime)
-    logearDatos();
+    //   loguearDatos();
+
+    // testeo el muestreo del envio de datos por el puerto
+    if (TIEMPOSUMA <= millis() - anteriorSuma)
+    {
+      anteriorSuma = millis();
+      lectura[3]++;
+      if (lectura[3] > 250)
+        lectura[3] = 1;
+
+      Serial.print("Trip: ");
+      Serial.println(lectura[3]);
+
+      lecturas = procesarDato(lectura[], CANTDATOS);
+      Serial1.print(lecturas);
+      Serial.println(lecturas);
+    }
+
+  // print the string when a newline arrives:
+  if (datoRecibidoCompleto)
+  {
+    Serial.println(inputString);
+    // clear the string:
+    inputString = "";
+    datoRecibidoCompleto = false;
+  }
 }
 
-void contador_pulsos()
+// Cada vez que tengo una interrupcion llamo a esta funcion y me devuelve la cantidad de microsegundo que hay entre pulso y pulso
+void contadorPulsos()
 {
   contador = micros() - anterior;
   anterior = micros();
@@ -83,70 +112,46 @@ void serialEvent()
 {
   while (Serial1.available())
   {
-    char inChar = (char)Serial.read();
+    char inChar = (char)Serial1.read();
     inputString += inChar;
-    if (inChar == '_')
+    if (inChar == '\n')
     {
       datoRecibidoCompleto = true;
     }
   }
 }
 
-void enviarDato(String dato)
-{
-  Serial1.print(dato);
-}
-
-void procesarDato()
+// Convierte en una palabra los datos recibidos
+String procesarDato(int lecturadatos[])
 {
   String datoCompleto = "";
-  float temp = 0;
+  String separador = " ";
+
   for (int i = 0; i < CANTDATOS; i++)
   {
-    temp = floatToString(lectura[i]);
+    datoCompleto += String(lecturadatos[i]);
 
-    if (lecturaEtiquetas[i] = "ODO")
-      temp = floatToString(lectura[i], true);
-
-    datoCompleto += lecturaEtiquetas[i];
-    datoCompleto += ":";
-    datoCompleto += temp;
-    datoCompleto += "-";
+    if (i < CANTDATOS - 1) // comento esta linea para probar si funciona el codigo
+      datoCompleto += separador;
   }
 
-  datoCompleto += "_";
-  Serial1.print(datoCompleto);
+  // datoCompleto += "/";
+
+  ultimoDato = datoCompleto;
+  // Serial1.print(datoCompleto);
+  return datoCompleto;
 }
 
-String floatToString(float numero, bool ceros, int largo, int decimal)
+void loguearDatos()
 {
-  char caracter[largo + 1];
-  String palabra;
-
-  dtostrf(numero, largo, decimal, caracter);
-  palabra = String(caracter);
-
-  if (ceros)
-  {
-    palabra.replace(" ", "0");
-    return palabra;
-  }
-
-  palabra.replace(" ", "");
-  return palabra;
+  String guardarLog = prepararDatosSD();
+  imprimirEnSD(guardarLog);
 }
 
-void logearDatos()
+// Prepara los datos para guardar en la tarjeta
+String prepararDatosSD()
 {
-  leerFecha();
-  valorPromedio();
-  calcularVelocidad();
-  imprimirEnSD();
-}
-
-void leerFecha()
-{
-  String dataString = "";
+  String logActual = "";
   DateTime now = RTC.now();
   dataString += String(now.day(), DEC);
   dataString += "/";
@@ -160,43 +165,11 @@ void leerFecha()
   dataString += ":";
   dataString += String(now.second(), DEC);
   dataString += ",";
-}
 
-void calcularVelocidad()
-{
-  float vel = 0;
-  if (contador > 0)
-  {
-    float pulsos_sec = 1000000 / contador;
-    float rad_s = (pulsos_sec / p) * 2 * 3.14;
-    // float vel = rad_s*26*0.5*2.54*0.01*3.6;
-    float vel = rad_s * 9.554; // rpm
-  }
+  int vel = calcularVelocidad(rueda, contador);
   dataString += String(vel);
   dataString += ",";
-}
 
-void imprimirEnSD()
-{
-  Serial.println("//////////////Dato completo//////////////");
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
-  if (dataFile)
-  {
-    dataFile.println(dataString);
-    dataFile.close();
-    Serial.println(dataString);
-  }
-  else
-  {
-    Serial.println("Error SD");
-  }
-
-  UltimoTiempoImprime = millis();
-  contador = 0;
-}
-
-void valorPromedio()
-{
   // ADS1115 Tomar valor promedio
   //     int16_t adc0, adc3;
   //     //adc0 = ads.readADC_SingleEnded(0);
@@ -216,14 +189,57 @@ void valorPromedio()
   //     //vsensor_V = vsensor_V / 4.489;
   //     //vsensor_I = vsensor_I * 0.833;
 
-  int16_t tension;
+  /*int16_t tension;
   int16_t corriente;
-  /* Be sure to update this value based on the IC and the gain settings! */
-  //    float multiplier = 0.007812F;
+  // Be sure to update this value based on the IC and the gain settings!
+  float multiplier = 0.007812F;*/
   //    corriente = ads.readADC_Differential_0_1();
   //    tension = ads.readADC_Differential_2_3();
   //    dataString += String(tension*multiplier*-0.2245);
   //    dataString += ",";
-  //    dataString += String(corriente*multiplier*-0.833);
+  //    dataString += String(float(corriente) * multiplier * -0.833);
   //    dataString += ",";
+
+  return dataString;
 }
+
+// Imprime los datos en la tarjeta
+void imprimirEnSD(String &logActual)
+{
+  Serial.println("//////////////Dato completo//////////////");
+  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+  if (dataFile)
+  {
+    dataFile.println(logActual);
+    dataFile.close();
+    Serial.println(logActual);
+  }
+  else
+  {
+    Serial.println("Error SD");
+  }
+
+  UltimoTiempoImprime = millis();
+  contador = 0;
+}
+
+// Calcular Velocidad     lectura[2]
+int calcularVelocidad(int diametro, int pulsos_por_vuelta)
+{
+  float velocidad_km_h = 0;
+  if (pulsos_por_vuelta > 0)
+  {
+    float circunferencia = PI * float(diametro) / 100;              // circunferencia de la rueda en metros
+    float tiempo_entre_pulsos_seg = pulsos_por_vuelta / 1000000.0;  // tiempo entre pulsos en segundos
+    float velocidad_m_s = circunferencia / tiempo_entre_pulsos_seg; // velocidad en m/s
+    velocidad_km_h = velocidad_m_s * 3.6;                           // velocidad en km/h
+  }
+  return int(velocidad_km_h);
+}
+
+// Temperatura ambiente   lectura[0]
+// Humedad                lectura[1]
+// Trip                   lectura[3]
+// Odometro               lectura[4]
+// temperatura bateria    lectura[5]
+// Carga batería          lectura[6]

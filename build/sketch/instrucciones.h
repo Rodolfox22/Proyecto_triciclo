@@ -1,6 +1,7 @@
-#line 1 "c:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\instrucciones.h"
+#line 1 "C:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\ESP8266_SPIFSS_Async_WebServer\\instrucciones.h"
   String dato_recibido;
-
+int num_velocidad=10;
+/*//Probe la sentencia leer dato y no funcionó
 String leerDato(char dato)
 {
   String palabra;
@@ -19,10 +20,10 @@ String leerDato(char dato)
   //tiempo_proceso = millis();
   while (Wire.available()) // hay datos disponibles?
   {
-   /* if (millis() - tiempo_proceso >= tiempo_espera)
+    if (millis() - tiempo_proceso >= tiempo_espera)
     {
       return "error";
-    }*/
+    }
 
     char c = Wire.read(); // recibir byte como un caracter
     palabra += c;
@@ -31,3 +32,4 @@ String leerDato(char dato)
   return palabra;
 }
 
+*/

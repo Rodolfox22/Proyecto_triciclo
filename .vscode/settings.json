@@ -8,5 +8,8 @@
   },
   "files.associations": {
     "*.tcc": "cpp"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
   }
 }

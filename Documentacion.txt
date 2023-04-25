@@ -1,0 +1,63 @@
+https://youtu.be/4zkoOnuTZpk
+
+https://www.youtube.com/watch?v=6S11ht_OsUc    <==
+
+ultrasonido con esp
+https://www.youtube.com/watch?v=N88l7FsYi50
+
+transiciones
+https://www.youtube.com/redirect?event=comments&redir_token=QUFFLUhqbjl2dy1RTTh2WUJUSURSRXhxWkxFMG54V0h4QXxBQ3Jtc0ttY044WEl0SFp5b3dqaDAwQ25FN2s0UEJ3ZHRuanN2eEthcU1mdldRZ1JxN3BEMnNWMkVEVjYyWHg3NFYwblJNdzkxcE05OUNwN04yVnVOMklveFhoMzd2UDh3SXR5ZERjZ2VpcThubURRdDVVZVdkaw&q=https%3A%2F%2Fgithub.com%2Fcodedgar%2FTutorial-BarbaJS&stzid=UgyNqMVJtXqOQpbFpqR4AaABAg
+
+https://www.diarioelectronicohoy.com/blog/funcionalidad-de-spiffs
+
+https://arduino-esp8266.readthedocs.io/en/3.0.2/	manual esp8266
+
+31-5
+
+https://randomnerdtutorials.com/esp-mesh-esp32-esp8266-painlessmesh/
+
+https://randomnerdtutorials.com/vs-code-platformio-ide-esp32-esp8266-arduino/
+
+Paginas deslizables
+https://www.youtube.com/watch?v=F7Mi1c3DFBs  
+
+ESP servidor
+https://www.youtube.com/watch?v=koXaRgnD5xg
+
+Lectura actualizada
+https://randomnerdtutorials.com/esp8266-nodemcu-access-point-ap-web-server/
+
+I2C
+https://programarfacil.com/blog/arduino-blog/comunicacion-i2c-con-arduino/
+
+Conversor de nivel
+https://www.luisllamas.es/arduino-level-shifter/
+
+https://www.inventable.eu/2017/05/03/adaptadores-nivel-5v-3-3v/
+
+comunicacion UART
+https://www.automatizacionparatodos.com/comunicacion-entre-dos-arduinos-con-el-puerto-serie/
+
+Float a string
+https://forum.arduino.cc/t/funcion-para-convetir-un-float-en-un-string/267772
+
+Paginas dinamicas
+https://www.um.es/docencia/barzana/DAWEB/2017-18/daweb-tema-13-paginas-web-dinamicas.html
+
+web socket
+https://www.youtube.com/watch?v=s_7wOnzSMLo&ab_channel=Ing.Ren%C3%A9Dom%C3%ADnguez
+
+https://www.youtube.com/watch?v=SCe5A0lQzlM&ab_channel=Jes%C3%BAsConde
+
+https://www.youtube.com/watch?v=qJT2FY1jjjE&ab_channel=EDteam
+
+Datasheet esp-01
+http://codigoelectronica.com/blog/esp8266-esp01-datasheet
+
+Puerto serie ESP8266
+http://pdacontroles.com/esp8266-dos-puertos-seriales-con-libreria-softwareserial/
+
+Css ID y Class
+https://www.google.com/search?q=problema+de+nombrar+igual+una+clase+y+un+id+en+css&oq=problema+de+nombrar+igual+una+clase+y+un+id+en+css&aqs=chrome..69i57.50521j0j1&sourceid=chrome&ie=UTF-8#kpvalbx=_NhN0Y9KvEtDX1sQPjvaF0As_34
+
+

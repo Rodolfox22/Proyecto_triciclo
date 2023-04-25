@@ -1,32 +1,34 @@
-void contador_pulsos();
-void serialEvent();
-void enviarDato(String = "_");
-void procesarDato();
-String floatToString(float, bool = false; int = 8, int = 2);
-void loguearDatos();
-void leerFecha();
-void valorPromedio();
-void calcularVelocidad();
-void imprimirEnSD();
+#define CANTDATOS 7
+#define DeltaTImprime 120000 // muestreo de datos en SD [ms]
+#define TIEMPOSUMA 1000
 
-#define CANTDATOS 10
-#define DeltaTImprime 1000 // muestreo [ms]
+void contadorPulsos();
+void serialEvent();
+void loguearDatos();
+void imprimirEnSD(String &dato);
+float calcularVelocidad(int rueda, int pulsosPorVuelta);
+String procesarDato(int lecturadatos[]);
+String prepararDatosSD();
+
+// Temperatura ambiente, Humedad, Velocidad, Trip, Odometro, temperatura bateria, Carga batería
+int lectura[CANTDATOS] = 225, 20, 8, 21, 36477, 348, 82;
 
 const int chipSelect = 10; // SD
 String dataString = ".";   // DATO
 String inputString = "";
+String lecturas = "";
 bool datoRecibidoCompleto = false;
 bool datoEnviadoCompleto = false;
 
-float lectura[CANTDATOS];
-String lecturaEtiquetas[CANTDATOS] = {"TAMB", "HAMB", "VEL", "DIS","ODO","REL","RET",   "TBAT", "VBAT", "IBAT"};
-
 int n_muestras = 10; // Promedio dato
 
-long contador = 0;        // contador pulsos
-int p = 4;                // pares polos motor
-long UltimoTiempoImprime, // muestreo
-    TiempoImprime,        // muestreo
-    ContadorImprime;      // muestreo
-long anterior = 0;        // muestreo
+long contador = 0;                 // contador pulsos
+int rueda = 4;                         // Diametro de la rueda en mm
+unsigned long UltimoTiempoImprime, // muestreo
+    TiempoImprime,                 // muestreo
+    ContadorImprime,               // muestreo
+    anteriorSuma;
+unsigned long anterior = 0; // muestreo
 float vel = 0;
+
+String ultimoDato = "";
