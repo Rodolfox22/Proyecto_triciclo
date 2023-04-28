@@ -42,7 +42,7 @@
           <p class="subtitulo">Bateria</p>
           <div>
             <p class="dato-secundario">
-              <span id="CARGA">%CARGA%</span>
+              <span id="carga">%CARGA%</span>
               <sup class="units">%</sup>
             </p>
           </div>
@@ -74,7 +74,7 @@
           <div></div>
           <div>
             <p class="dato-secundario">
-              <span id="odometro">%ODOMETRO%</span>
+              <span id="odometro">%ODO%</span>
               <sup class="units">km</sup>
             </p>
           </div>
@@ -95,14 +95,16 @@
       </div>
     </div>
   </body>
-
-  <!-- 
-  var == "HUMEDAD") Humedad = leerDato("H"); 
-  var == "TEMP_BAT")  Temp_bat = leerDato("T"); 
-  var == "TEMPERATURA") Temperatura =  leerDato("U"); 
-  var == "RETROCESO") Retroceso = leerDato("R"); 
-  var == "CARGA")  Carga = leerDato("C");
-  -->
-
   <script src="main.js"></script>
 </html>
+<!-- 
+     Nombre               Variable     Id HTML       Etiqueta
+  Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
+  Humedad                lectura[1] "humedad"      "/HUMEDAD"
+  Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
+  Trip                   lectura[3] "trip"         "/TRIP"
+  Odometro               lectura[4] "odometro"     "/ODO"
+  Temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
+  Carga batería          lectura[6] "carga"        "/CARGA"
+-->
+  

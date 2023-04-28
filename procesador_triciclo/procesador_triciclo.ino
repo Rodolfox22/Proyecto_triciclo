@@ -15,8 +15,8 @@ void setup()
 {
   ////////////SERIAL////////////
   Serial.setTimeout(10);
-  Serial.begin(115200);
-  Serial1.begin(115200);
+  Serial.begin(9600);
+  Serial1.begin(9600);
 
   ////////////RTC////////////
   Wire.begin();
@@ -124,8 +124,8 @@ void serialEvent()
 // Convierte en una palabra los datos recibidos
 String procesarDato(int lecturadatos[])
 {
-  String datoCompleto = "";
-  String separador = " ";
+  String datoCompleto = String(CANTDATOS);
+  String separador = ",";
 
   for (int i = 0; i < CANTDATOS; i++)
   {
@@ -135,7 +135,7 @@ String procesarDato(int lecturadatos[])
       datoCompleto += separador;
   }
 
-  // datoCompleto += "/";
+  datoCompleto += "/";
 
   ultimoDato = datoCompleto;
   // Serial1.print(datoCompleto);
@@ -239,6 +239,7 @@ int calcularVelocidad(int diametro, int pulsos_por_vuelta)
 
 // Temperatura ambiente   lectura[0]
 // Humedad                lectura[1]
+// Calcular Velocidad     lectura[2]
 // Trip                   lectura[3]
 // Odometro               lectura[4]
 // temperatura bateria    lectura[5]

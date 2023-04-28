@@ -1,0 +1,2 @@
+-include "C:\\Users\\Usuario\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.1.2\\cores\\esp8266\\CommonHFile.h"
+-include "C:\\Users\\Usuario\\Documents\\Arduino\\Proyecto_triciclo\\build\\core\\ESP8266_SPIFSS_Async_WebServer.ino.globals.h"

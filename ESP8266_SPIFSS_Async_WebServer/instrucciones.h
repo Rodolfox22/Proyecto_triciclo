@@ -1,34 +1,51 @@
-  String dato_recibido;
-int num_velocidad=10;
-/*//Probe la sentencia leer dato y no funcionó
-String leerDato(char dato)
-{
-  String palabra;
-  unsigned long tiempo_espera = 50;
-  unsigned long tiempo_proceso;
+//                        Variable     Id HTML       Etiqueta
+// Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
+// Humedad                lectura[1] "humedad"      "/HUMEDAD"
+// Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
+// Trip                   lectura[3] "trip"         "/TRIP"
+// Odometro               lectura[4] "odometro"     "/ODO"
+// temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
+// Carga batería          lectura[6] "carga"        "/CARGA"
 
-  Wire.beginTransmission(23); // Comenzar a comunicarse con esclavo #23
-  Wire.write(dato);
-  Wire.endTransmission(); // Finalizar comunicación
+#define CANTDATOS 7
 
-  Wire.requestFrom(23, 1); // Solicitar 1 byte del esclavo #23
+String dato_recibido = "";
+String dato_actual = "";
+int num_velocidad = 10;
 
-  byte len = Wire.read();
-  Wire.requestFrom(23, (int)len); // Solicitar 'len' byte del esclavo #23
-
-  //tiempo_proceso = millis();
-  while (Wire.available()) // hay datos disponibles?
-  {
-    if (millis() - tiempo_proceso >= tiempo_espera)
-    {
-      return "error";
-    }
-
-    char c = Wire.read(); // recibir byte como un caracter
-    palabra += c;
-    Serial.print(c); // enviar caracter al monitor
-  }
-  return palabra;
-}
-
+/*
+const char *ssid = "UNRaf_Libre";
+const char *password = "unraf2021";
 */
+
+const char *ssid = "Wi-Fi Britez";
+const char *password = "50376britez";
+
+const char *ssid_AP = "Triciclo";
+const char *password_AP = "unraf2022";
+
+IPAddress ip(192, 168, 0, 10);
+IPAddress gateway(192, 168, 0, 1);
+IPAddress subnet(255, 255, 255, 0);
+
+const int Rele_Pin = 2;
+
+unsigned long tiempo_anterior = 0;
+unsigned long tiempo_solicitud = 2000;
+
+String Estado_Pin;
+
+int variables[] = {210, 60, 0, 0, 250, 325, 85};
+int primera_lectura[] = {210, 60, 0, 0, 250, 325, 85};
+float temperatura = 21.0;
+int humedad = 60;
+int velocidad = 0;
+int trip = 0;
+int odometro = 250;
+float temp_bat = 32.5;
+int carga = 85;
+
+AsyncWebServer server(80);
+SoftwareSerial ComSerial(D5, D6);
+
+void setearVariables();

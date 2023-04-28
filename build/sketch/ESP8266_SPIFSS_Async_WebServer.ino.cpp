@@ -3,7 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-#include <Wire.h>
+//#include <Wire.h>
 
 #include "instrucciones.h"
 
@@ -28,7 +28,8 @@ unsigned long demora = 0;
 unsigned long tiempo_solicitud = 5000;
 
 String Estado_Pin;
-String Velocidad = "10"; /*
+String Velocidad = "10";
+/*
  int num_Velocidad = 0;
  String Carga = "20";
  String Temp_bat = "35";
@@ -63,6 +64,7 @@ String processor(const String &var)
     Serial.println(Velocidad);
     return Velocidad;
   }
+
   /*
     if (var == "HUMEDAD")
     {
@@ -123,7 +125,7 @@ void setup()
     return;
   }
   // Inicio I2C
-  //Wire.begin();
+  // Wire.begin();
 
   // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
@@ -203,19 +205,20 @@ void setup()
 
   server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
               {
-                /*Serial.println(millis());
-  if (millis()-demora>=tiempo_solicitud)
-  {
-    demora = millis();
-    num_Velocidad ++;
-    if (num_Velocidad >= 25)
-    {
-      num_Velocidad = 1;
-    }*/
-      Velocidad = String(num_Velocidad);
+    /*Serial.println(millis());
+if (millis()-demora>=tiempo_solicitud)
+{
+demora = millis();
+num_Velocidad ++;
+if (num_Velocidad >= 25)
+{
+num_Velocidad = 1;
+}*/
+    Velocidad = String(num_Velocidad);
   }
 
-    request->send(SPIFFS, "/index.html", String(), false, processor); });
+    request->send(SPIFFS, "/index.html", String(), false, processor);
+});
 /*
     server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
               {
@@ -228,9 +231,9 @@ void setup()
       request->send(SPIFFS, "/index.html", String(), false, processor); });
     server.begin();
   */
- }
-  
-  void loop()
-  {
-  }
+}
+
+void loop()
+{
+}
 
