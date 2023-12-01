@@ -3,44 +3,11 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-//#include <Wire.h>
-
+#include <SoftwareSerial.h>
 #include "instrucciones.h"
 
-/*
-const char *ssid = "xxxxxxxxx";
-const char *password = "yyyyyyy";
-*/
-
-const char *ssid = "UNRaf_Libre";
-const char *password = "unraf2021";
-
-const char *ssid_AP = "Triciclo";
-const char *password_AP = "unraf2022";
-
-IPAddress ip(192, 168, 0, 10);
-IPAddress gateway(192, 168, 0, 1);
-IPAddress subnet(255, 255, 255, 0);
-
-const int Rele_Pin = 2;
-
-unsigned long demora = 0;
-unsigned long tiempo_solicitud = 5000;
-
-String Estado_Pin;
-String Velocidad = "10";
-/*
- int num_Velocidad = 0;
- String Carga = "20";
- String Temp_bat = "35";
- String Retroceso;
- String Humedad = "75";
- String Temperatura = "10";
- String Trip = "52";
- String Odometro = "720";
- String Temporal;*/
-
 AsyncWebServer server(80);
+SoftwareSerial ComSerial(D5, D6);
 
 String processor(const String &var)
 {
@@ -58,74 +25,89 @@ String processor(const String &var)
     return Estado_Pin;
   }
 
+  // Calcular Velocidad lectura[2] "velocidad" / "/VEL"
   if (var == "VEL")
   {
     Serial.print("Velocidad: ");
-    Serial.println(Velocidad);
-    return Velocidad;
+    Serial.println(velocidad);
+    return String(velocidad);
+  }
+  // Trip lectura[3] "trip" / "/TRIP"
+  if (var == "TRIP")
+  {
+    Serial.print("Trip: ");
+    Serial.println(trip);
+    return String(trip);
+  }
+
+  // Odometro lectura[4] "odometro" / "/ODO"
+  if (var == "ODO")
+  {
+    Serial.print("Odometro: ");
+    Serial.println(odometro);
+    return String(odometro);
+  }
+  /* return "error";
+ }
+
+ String processor2(const String &var)
+ {*/
+
+  /*// Temperatura ambiente   lectura[0] "temperatura" / "/TEMPERATURA"
+  if (var == "TEMPERATURA")
+  {
+    Serial.print("Temperatura: ");
+    Serial.println(temperatura);
+    return String(temperatura);
+  }*/
+
+  /*// Humedad lectura[1] "humedad" / "/HUMEDAD"
+  if (var == "HUMEDAD")
+  {
+    Serial.print("Humedad: ");
+    Serial.println(humedad);
+    return String(humedad);
+  }
+*/
+
+  // Temperatura bateria lectura[5] "temp_bat" / "/TEMP_BAT"
+  if (var == "TEMP_BAT")
+  {
+    Serial.print("Temperatura bateria: ");
+    Serial.println(temp_bat);
+    return String(temp_bat);
+  }
+
+  // Carga batería lectura[6] "carga" / "/CARGA"
+  if (var == "CARGA")
+  {
+    Serial.print("Carga: ");
+    Serial.println(carga);
+    return String(carga);
   }
 
   /*
-    if (var == "HUMEDAD")
-    {
-      Serial.print("Velocidad: ");
-      Serial.println(Humedad);
-      return Humedad;
-    }
-
-    if (var == "TEMP_BAT")
-    {
-      Serial.print("Temperatura bateria: ");
-      Serial.println(Temp_bat);
-      return Temp_bat;
-    }
-
-    if (var == "TEMPERATURA")
-    {
-      Serial.print("Temperatura: ");
-      Serial.println(Temperatura);
-      return Temperatura;
-    }
-
-    if (var == "RETROCESO")
-    {
-      return Retroceso;
-    }
-
-    if (var == "CARGA")
-    {
-      Serial.print("Carga: ");
-      Serial.println(Carga);
-      return Carga;
-    }
-    if (var == "ODOMETRO")
-    {
-      Serial.print("Odometro: ");
-      Serial.println(Odometro);
-      return Odometro;
-    }
-    if (var == "TRIP")
-    {
-      Serial.print("Trip: ");
-      Serial.println(Trip);
-      return Trip;
-    }*/
+      if (var == "RETROCESO")
+      {
+        return Retroceso;
+      }
+  */
+  return "error";
 }
 
 void setup()
 {
   // Serial port for debugging purposes
-  Serial.begin(115200);
-  Serial1.begin(115200);
+  Serial.begin(9600);
+  ComSerial.begin(9600);
   pinMode(Rele_Pin, OUTPUT);
+  tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
   {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
-  // Inicio I2C
-  // Wire.begin();
 
   // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
@@ -156,10 +138,10 @@ void setup()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  /*Por el momento no cargo el archivo CSS para que analizar en profundidad la funcionalidad
-  // Route to load style.css file
+  // Por el momento no cargo el archivo CSS para que analizar en profundidad la funcionalidad
+  //  Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/estilos.css", "text/css"); });*/
+            { request->send(SPIFFS, "/estilos.css", "text/css"); });
 
   // Route to load main.js file
   server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -177,7 +159,7 @@ void setup()
     digitalWrite(Rele_Pin, HIGH);    
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  /*// Route to set GPIO to CHANGE
+  // Route to set GPIO to CHANGE
   server.on("/RELE=CHANGE", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     if (digitalRead(Rele_Pin)==0)
@@ -185,55 +167,99 @@ void setup()
     else
       digitalWrite(Rele_Pin, LOW);
     request->send(SPIFFS, "/index.html", String(), false, processor); });
-*/
+
+  /*// Temperatura ambiente   lectura[0] "temperatura" / "/TEMPERATURA"
+    server.on("/TEMPERATURA", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });
+  */
+
+  /*// Humedad                lectura[1] "humedad"     / "/HUMEDAD"
+  server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });*/
+
+  // Calcular Velocidad     lectura[2] "velocidad"   / "/VEL"
+  server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+            // Probar cambio de la pagina
+            velocidad++;
+            if (velocidad >= 250)
+            {
+              velocidad = 0;
+            }
+               request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Trip                   lectura[3] "trip"        / "/TRIP"
+  server.on("/TRIP", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Odometro               lectura[4] "odometro"    / "/ODO"
+  server.on("/ODO", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Temperatura bateria    lectura[5] "temp_bat"    / "/TEMP_BAT"
+  server.on("/TEMP_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  // Carga batería          lectura[6] "carga"       / "/CARGA"
+  server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
   /*
-    server.on("/TEMP_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-      //Temp_bat = leerDato('T');
-      request->send(SPIFFS, "/index.html", String(), false, processor); });
+      server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
+                {
+        //Retroceso = leerDato('R');
+        request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-    server.on("/TEMPERATURA", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-      //Temperatura = leerDato('U');
-      request->send(SPIFFS, "/index.html", String(), false, processor); });
-
-    server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-      //Humedad = leerDato('H');
-      request->send(SPIFFS, "/index.html", String(), false, processor); });*/
-
-  server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-    /*Serial.println(millis());
-if (millis()-demora>=tiempo_solicitud)
-{
-demora = millis();
-num_Velocidad ++;
-if (num_Velocidad >= 25)
-{
-num_Velocidad = 1;
-}*/
-    Velocidad = String(num_Velocidad);
-  }
-
-    request->send(SPIFFS, "/index.html", String(), false, processor);
-});
-/*
-    server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-      //Retroceso = leerDato('R');
-      request->send(SPIFFS, "/index.html", String(), false, processor); });
-
-    server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
-      //Carga = leerDato('C');
-      request->send(SPIFFS, "/index.html", String(), false, processor); });
-    server.begin();
-  */
+    */
+  server.begin();
 }
 
 void loop()
 {
+
+  if (tiempo_solicitud >= millis() - tiempo_anterior)
+  {
+    if (datos_recibidos)
+    {
+      setearVariables();
+      datos_recibidos = 0;
+    }
+
+    Serial.println(velocidad);
+    tiempo_anterior = millis();
+  }
+}
+
+void setearVariables()
+{
+  temperatura = variables[0].toFloat() / 10.0;
+  humedad = variables[1].toInt();
+  velocidad = variables[2].toInt();
+  trip = variables[3].toInt();
+  odometro = variables[4].toInt();
+  temp_bat = variables[5].toFloat() / 10.0;
+  carga = variables[6].toInt();
+}
+
+void serialEvent()
+{
+  if (ComSerial.available())
+  {
+    datos_recibidos++;
+    char cantDatos = ComSerial.read(); // En el string envío la cantidad de datos existentes
+    int cant_datos = int(cantDatos);
+
+    for (int indice = 0; indice < cant_datos; indice++)
+    {
+      if (indice < cant_datos - 1)
+      {
+        variables[indice] = ComSerial.readStringUntil(',');
+      }
+      else
+      {
+        variables[indice] = ComSerial.readStringUntil('/');
+      }
+    }
+  }
 }
 

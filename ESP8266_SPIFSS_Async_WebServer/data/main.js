@@ -1,4 +1,59 @@
-setInterval(function () {
+let envios = 0;
+const variables = [
+  ["humedad", "/HUMEDAD"],
+  ["velocidad", "/VEL"],
+  ["trip", "/TRIP"],
+  ["odometro", "/ODO"],
+  ["temp_bat", "/TEMP_BAT"],
+  ["carga", "/CARGA"],
+];
+
+function solicitud(elementoId, url) {
+  console.log(elementoId);
+  console.log(url);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById(elementoId).innerHTML = this.responseText;
+      console.log(this.responseText);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader("Cache-Control", "no-cache");
+  xhttp.send();
+  //console.log(envios);
+  envios++;
+}
+
+function hacerSolicitud(elementoId, url) {
+  return new Promise((resolve, reject) => {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        resolve(
+          (document.getElementById(elementoId).innerHTML = this.responseText)
+        );
+        console.log(this.responseText);
+      } else {
+        reject(new Error("Error en la solicitud al servidor"));
+      }
+    };
+    xhttp.open("GET", url, true);
+    xhttp.send();
+  });
+}
+
+// Ejemplo de uso con await
+async function ejemplo() {
+  try {
+    const resultado = await hacerSolicitud(variables[1][0], variables[1][1]);
+    console.log("Respuesta del servidor:", resultado);
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+}
+
+/*setInterval(function () {
   // Temperatura ambiente   lectura[0]
   var xhttpTempAmb = new XMLHttpRequest();
   xhttpTempAmb.onreadystatechange = function () {
@@ -7,6 +62,7 @@ setInterval(function () {
     }
   };
   xhttpTempAmb.open("GET", "/TEMPERATURA", true);
+  xhttp.setRequestHeader("Cache-Control", "no-cache");
   xhttpTempAmb.send();
 
   // Humedad                lectura[1]
@@ -17,26 +73,55 @@ setInterval(function () {
     }
   };
   xhttpHumedad.open("GET", "/HUMEDAD", true);
+  xhttp.setRequestHeader("Cache-Control", "no-cache");
   xhttpHumedad.send();
+  
+  // Temperatura bateria    lectura[5]
+  var xhttpTemBat = new XMLHttpRequest();
+  xhttpTemBat.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("temp_bat").innerHTML = this.responseText;
+    }
+  };
+  xhttpTemBat.open("GET", "/TEMP_BAT", true);
+  //xhttp.setRequestHeader("Cache-Control", "no-cache");
+  xhttpTemBat.send();
+  
+  // Carga batería          lectura[6]
+  var xhttpCarga = new XMLHttpRequest();
+  xhttpCarga.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("carga").innerHTML = this.responseText;
+    }
+  };
+  xhttpCarga.open("GET", "/CARGA", true);
+ // xhttp.setRequestHeader("Cache-Control", "no-cache");
+  xhttpCarga.send();
+  
+}, 10000);*/
 
+setInterval(function () {
   // Velocidad              lectura[2]
-  var xhttpVelocidad = new XMLHttpRequest();
+  /*var xhttpVelocidad = new XMLHttpRequest();
   xhttpVelocidad.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("velocidad").innerHTML = this.responseText;
+      console.log(this.responseText);
     }
   };
   xhttpVelocidad.open("GET", "/VEL", true);
-  xhttpVelocidad.send();
-
+  xhttpVelocidad.setRequestHeader("Cache-Control", "no-cache");
+  xhttpVelocidad.send();*/
+  //console.log(envios);
   // Trip                   lectura[3]
-  var xhttpTrip = new XMLHttpRequest();
+  /*var xhttpTrip = new XMLHttpRequest();
   xhttpTrip.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("trip").innerHTML = this.responseText;
     }
   };
   xhttpTrip.open("GET", "/TRIP", true);
+  //xhttp.setRequestHeader("Cache-Control", "no-cache");
   xhttpTrip.send();
 
   // Odometro               lectura[4]
@@ -47,38 +132,26 @@ setInterval(function () {
     }
   };
   xhttpOdometro.open("GET", "/ODO", true);
+  xhttp.setRequestHeader("Cache-Control", "no-cache");
   xhttpOdometro.send();
 
-  // Temperatura bateria    lectura[5]
-  var xhttpTemBat = new XMLHttpRequest();
-  xhttpTemBat.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("temp_bat").innerHTML = this.responseText;
-    }
-  };
-  xhttpTemBat.open("GET", "/TEMP_BAT", true);
-  xhttpTemBat.send();
 
-  // Carga batería          lectura[6]
-  var xhttpCarga = new XMLHttpRequest();
-  xhttpCarga.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("carga").innerHTML = this.responseText;
-    }
-  };
-  xhttpCarga.open("GET", "/CARGA", true);
-  xhttpCarga.send();
 
-  /*//Retroceso
+  //Retroceso
   var xhttpRetroceso = new XMLHttpRequest();
   xhttpRetroceso.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-    document.getElementById("retroceso").innerHTML = this.responseText;
+      document.getElementById("retroceso").innerHTML = this.responseText;
   }
-  };
+};
   xhttpRetroceso.open("GET", "/RETROCESO", true);
   xhttpRetroceso.send();*/
-}, 5000);
+  /*for (const elemId in variables) {
+    solicitud(variables[elemId][0], variables[elemId][1]);
+  }*/
+  //solicitud(variables[1][0], variables[1][1]);
+  ejemplo();
+}, 1500);
 
 //                        Variable     Id HTML       Etiqueta
 // Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"

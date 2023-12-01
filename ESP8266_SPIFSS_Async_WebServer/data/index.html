@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Triciclo</title>
-    <!--<link rel="stylesheet" href="estilos.css" />-->
+    <link rel="stylesheet" href="estilos.css" />
   </head>
   <body>
     <div class="pantalla">
-      <div class="pantalla-clima">
+      <!--<div class="pantalla-clima">
         <div class="clima">
           <p class>
             <span id="temperatura">%TEMPERATURA%</span>
@@ -21,14 +21,13 @@
             <sup class="units">%</sup>
           </p>
         </div>
-      </div>
+      </div>-->
       <div class="pantalla-principal">
         <div class="flecha-izq" id="flecha-izq">
           <div class="arrow-5 arrow-6 arrow-on"></div>
         </div>
         <div class="velo">
           <p class="dato">
-            <i class="fas fa-tint" style="color: #00add6"></i>
             <span id="velocidad">%VEL%</span>
             <sup class="units">km/h</sup>
           </p>
@@ -37,6 +36,7 @@
           <div class="arrow-5 arrow-on"></div>
         </div>
       </div>
+
       <div class="pantalla-secundario">
         <div class="datos-bateria">
           <p class="subtitulo">Bateria</p>
@@ -63,7 +63,10 @@
           </div>
           <div>
             <p class="dato-secundario">
-              <button class="button button3" onclick="location.href='/RELE=CHANGE'">
+              <button
+                class="button button3"
+                onclick="location.href='/RELE=CHANGE'"
+              >
                 Reiniciar
               </button>
             </p>
@@ -107,4 +110,3 @@
   Temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
   Carga batería          lectura[6] "carga"        "/CARGA"
 -->
-  

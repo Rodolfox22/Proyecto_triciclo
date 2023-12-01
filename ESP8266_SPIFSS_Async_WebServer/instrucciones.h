@@ -11,14 +11,13 @@
 
 String dato_recibido = "";
 String dato_actual = "";
-int num_velocidad = 10;
 
 /*
 const char *ssid = "UNRaf_Libre";
 const char *password = "unraf2021";
 */
 
-const char *ssid = "Wi-Fi Britez";
+const char *ssid = "Wi-Fi BRITEZ";
 const char *password = "50376britez";
 
 const char *ssid_AP = "Triciclo";
@@ -35,8 +34,8 @@ unsigned long tiempo_solicitud = 2000;
 
 String Estado_Pin;
 
-int variables[] = {210, 60, 0, 0, 250, 325, 85};
-int primera_lectura[] = {210, 60, 0, 0, 250, 325, 85};
+int datos_recibidos=0;
+String variables[] = {"210","60", "0", "0", "250", "325", "85"};
 float temperatura = 21.0;
 int humedad = 60;
 int velocidad = 0;
@@ -44,8 +43,5 @@ int trip = 0;
 int odometro = 250;
 float temp_bat = 32.5;
 int carga = 85;
-
-AsyncWebServer server(80);
-SoftwareSerial ComSerial(D5, D6);
 
 void setearVariables();
