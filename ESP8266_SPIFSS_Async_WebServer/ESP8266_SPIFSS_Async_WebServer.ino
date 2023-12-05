@@ -5,7 +5,7 @@
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
-SoftwareSerial ComSerial(D5, D6);
+// SoftwareSerial ComSerial(D5, D6);
 
 String processor(const String &var)
 {
@@ -23,7 +23,24 @@ String processor(const String &var)
     return Estado_Pin;
   }
 
-  // Calcular Velocidad lectura[2] "velocidad" / "/VEL"
+  if (var == "ACTUALIZAR")
+  {
+    // TODO: enviar los datos en forma de texto para desdoblarlos en la pagina, en esta linea tengo que obtener los datos
+    if (ComSerial.available())
+    {
+      datos_recibidos++;
+      String datos = String(datos_recibidos);
+      datos += "Datos:";
+      datos += ComSerial.readString();
+      ComSerial.write("Datos ok");
+      ComSerial.flush();
+      
+      return datos;
+    }
+    return "error";
+  }
+
+  /*// Calcular Velocidad lectura[2] "velocidad" / "/VEL"
   if (var == "VEL")
   {
     Serial.print("Velocidad: ");
@@ -44,7 +61,7 @@ String processor(const String &var)
     Serial.print("Odometro: ");
     Serial.println(odometro);
     return String(odometro);
-  }
+  }*/
   /* return "error";
  }
 
@@ -57,19 +74,18 @@ String processor(const String &var)
     Serial.print("Temperatura: ");
     Serial.println(temperatura);
     return String(temperatura);
-  }*/
+  }
 
-  /*// Humedad lectura[1] "humedad" / "/HUMEDAD"
+  // Humedad lectura[1] "humedad" / "/HUMEDAD"
   if (var == "HUMEDAD")
   {
     Serial.print("Humedad: ");
     Serial.println(humedad);
     return String(humedad);
   }
-*/
 
-  // Temperatura bateria lectura[5] "temp_bat" / "/TEMP_BAT"
-  if (var == "TEMP_BAT")
+  // Temperatura bateria lectura[5] "temp_bat" / "/TEMPBAT"
+  if (var == "TEMPBAT")
   {
     Serial.print("Temperatura bateria: ");
     Serial.println(temp_bat);
@@ -82,14 +98,13 @@ String processor(const String &var)
     Serial.print("Carga: ");
     Serial.println(carga);
     return String(carga);
-  }
+  }*/
 
-  /*
-      if (var == "RETROCESO")
-      {
-        return Retroceso;
-      }
-  */
+  /*if (var == "RETROCESO")
+   {
+     return Retroceso;
+   }*/
+
   return "error";
 }
 
@@ -108,27 +123,27 @@ void setup()
   }
 
   // Connect to Wi-Fi
-  WiFi.mode(WIFI_STA);
+  /*WiFi.mode(WIFI_STA);
   WiFi.config(ip, gateway, subnet);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
-  }
-  Serial.println(WiFi.localIP());
+  {*/
+  
+  delay(1000);
+  Serial.println("Connecting to WiFi..");
+  //}
+  // Serial.println(WiFi.localIP());
 
   // Modo Acces point
-  /*
-      WiFi.mode(WIFI_AP);
-      WiFi.softAP(ssid_AP, password_AP);
 
-      Serial.print("Servidor: ");
-      Serial.println(WiFi.softAPIP());
-      Serial.print("Local: ");
-      Serial.println(WiFi.localIP());
-      delay(1000);
-    */
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP(ssid_AP, password_AP);
+
+  Serial.print("Servidor: ");
+  Serial.println(WiFi.softAPIP());
+  Serial.print("Local: ");
+  Serial.println(WiFi.localIP());
+  delay(1000);
 
   // TODO como conectar directamente? necesita una instruccion especial para que funcione como servidor?
 
@@ -166,42 +181,45 @@ void setup()
       digitalWrite(Rele_Pin, LOW);
     request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  /*// Temperatura ambiente   lectura[0] "temperatura" / "/TEMPERATURA"
+  server.on("/ACTUALIZAR", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+
+  /*
+    // Temperatura ambiente   lectura[0] "temperatura" / "/TEMPERATURA"
     server.on("/TEMPERATURA", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(SPIFFS, "/index.html", String(), false, processor); });
-  */
 
-  /*// Humedad                lectura[1] "humedad"     / "/HUMEDAD"
-  server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });*/
+    // Humedad                lectura[1] "humedad"     / "/HUMEDAD"
+    server.on("/HUMEDAD", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  // Calcular Velocidad     lectura[2] "velocidad"   / "/VEL"
-  server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-            // Probar cambio de la pagina
-            velocidad++;
-            if (velocidad >= 250)
-            {
-              velocidad = 0;
-            }
-               request->send(SPIFFS, "/index.html", String(), false, processor); });
+    // Calcular Velocidad     lectura[2] "velocidad"   / "/VEL"
+    server.on("/VEL", HTTP_GET, [](AsyncWebServerRequest *request)
+              {
+              // Probar cambio de la pagina
+              velocidad++;
+              if (velocidad >= 250)
+              {
+                velocidad = 0;
+              }
+                 request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  // Trip                   lectura[3] "trip"        / "/TRIP"
-  /*server.on("/TRIP", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+    // Trip                   lectura[3] "trip"        / "/TRIP"
+    server.on("/TRIP", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  // Odometro               lectura[4] "odometro"    / "/ODO"
-  server.on("/ODO", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+    // Odometro               lectura[4] "odometro"    / "/ODO"
+    server.on("/ODO", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  // Temperatura bateria    lectura[5] "temp_bat"    / "/TEMP_BAT"
-  server.on("/TEMP_BAT", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+    // Temperatura bateria    lectura[5] "temp_bat"    / "/TEMP_BAT"
+    server.on("/TEMPBAT", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });
 
-  // Carga batería          lectura[6] "carga"       / "/CARGA"
-  server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
-*/
+    // Carga batería          lectura[6] "carga"       / "/CARGA"
+    server.on("/CARGA", HTTP_GET, [](AsyncWebServerRequest *request)
+              { request->send(SPIFFS, "/index.html", String(), false, processor); });*/
+
   /*
       server.on("/RETROCESO", HTTP_GET, [](AsyncWebServerRequest *request)
                 {
@@ -215,17 +233,17 @@ void setup()
 void loop()
 {
 
-  if (tiempo_solicitud >= millis() - tiempo_anterior)
-  {
-    if (datos_recibidos)
-    {
-      setearVariables();
-      datos_recibidos = 0;
-    }
+  /**if (tiempo_solicitud >= millis() - tiempo_anterior)
+   {
+     if (datos_recibidos)
+     {
+       setearVariables();
+       datos_recibidos = 0;
+     }
 
-    Serial.println(velocidad);
-    tiempo_anterior = millis();
-  }
+     Serial.println(velocidad);
+     tiempo_anterior = millis();
+   }*/
 }
 
 void setearVariables()
@@ -237,26 +255,4 @@ void setearVariables()
   odometro = variables[4].toInt();
   temp_bat = variables[5].toFloat() / 10.0;
   carga = variables[6].toInt();
-}
-
-void serialEvent()
-{
-  if (ComSerial.available())
-  {
-    datos_recibidos++;
-    char cantDatos = ComSerial.read(); // En el string envío la cantidad de datos existentes
-    int cant_datos = int(cantDatos);
-
-    for (int indice = 0; indice < cant_datos; indice++)
-    {
-      if (indice < cant_datos - 1)
-      {
-        variables[indice] = ComSerial.readStringUntil(',');
-      }
-      else
-      {
-        variables[indice] = ComSerial.readStringUntil('/');
-      }
-    }
-  }
 }

@@ -124,7 +124,7 @@ void serialEvent()
 // Convierte en una palabra los datos recibidos
 String procesarDato(int lecturadatos[])
 {
-  String datoCompleto = String(CANTDATOS);
+  String datoCompleto = "Cantidad de datos:" + String(CANTDATOS);
   String separador = ",";
 
   for (int i = 0; i < CANTDATOS; i++)

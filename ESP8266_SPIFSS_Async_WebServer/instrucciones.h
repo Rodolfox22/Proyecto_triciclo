@@ -4,7 +4,7 @@
 // Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
 // Trip                   lectura[3] "trip"         "/TRIP"
 // Odometro               lectura[4] "odometro"     "/ODO"
-// temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
+// temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
 
 #define CANTDATOS 7
@@ -23,7 +23,7 @@ const char *password = "50376britez";
 const char *ssid_AP = "Triciclo";
 const char *password_AP = "unraf2022";
 
-IPAddress ip(192, 168, 0, 10);
+IPAddress ip(192, 168, 0, 20);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 

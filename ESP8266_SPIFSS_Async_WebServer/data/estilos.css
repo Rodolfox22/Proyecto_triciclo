@@ -1,7 +1,7 @@
 :root {
   --color-detalle: rgb(95, 228, 210);
   --flecha-on: rgb(19, 177, 5);
-  --flecha-off: rgb(60, 102, 56);
+  --flecha-off: rgb(42, 70, 40);
   --fondo: black;
 }
 
@@ -13,8 +13,9 @@
 
 html {
   height: 100%;
-  min-width: 500px;
+  min-width: 400px;
   background-color: black;
+  font-size: 1.5em;
 }
 
 body {
@@ -37,15 +38,19 @@ body {
   line-height: 80px;
 }
 
+.clima * {
+  font-size: 1.5em;
+}
+
 .subtitulo {
-  font-size: 2vw;
+  font-size: 1.8em;
 }
 
 .button {
   background-color: rgb(209, 82, 73);
   color: rgb(218, 212, 212);
-  width: 200px;
-  height: 50px;
+  /*width: 200px;
+  height: 50px;*/
   border: var(--color-detalle);
   border-radius: 15px;
   font-family: fantasy;
@@ -65,10 +70,9 @@ body {
 }
 .button3 {
   background-color: rgb(69, 70, 69);
-  width: 100px;
-  height: 40px;
   border-radius: 10px;
-  font-size: 18px;
+  font-size: 1.2em;
+  padding: 0px .3em;
 }
 .button3:hover {
   background-color: rgb(126, 134, 126);
@@ -115,14 +119,10 @@ body {
   align-self: center;
 }
 
-.velo {
-  align-items: center;
-  justify-content: center;
-}
 .velo * {
   align-items: center;
   justify-content: center;
-  font-size: 5vw;
+  font-size: 2.8em;
 }
 
 .pantalla-secundario {
@@ -149,7 +149,7 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
   justify-content: center;
   align-items: center;
-  margin:5px;
+  margin: 5px;
 }
 .datos-odometro *,
 .datos-bateria *,
@@ -161,7 +161,7 @@ body {
   color: white;
   list-style: none;
   text-align: center;
-  font-size: 2.5vw;
+  font-size: 1.5em;
   text-decoration: none;
 }
 
@@ -170,6 +170,10 @@ body {
   grid-template-rows: 1fr 3fr 3fr;
   overflow: hidden;
   min-height: 100vh;
+}
+
+.units {
+  font-size: 0.7em;
 }
 
 .caja {
@@ -188,7 +192,7 @@ body {
   position: relative;
   height: 0px;
   width: 0px;
-  border: 12px solid;
+  border: 1.6em solid;
   border-color: var(--flecha-off) var(--flecha-off) transparent transparent;
   transform: rotate(45deg);
 }
@@ -199,10 +203,10 @@ body {
   top: 0px;
   right: 0px;
   display: block;
-  height: 18px;
-  width: 24px;
+  height: 2em;
+  width: 2.5em;
   background-color: var(--flecha-off);
-  transform: rotate(-45deg) translate(4px, 2px);
+  transform: rotate(-45deg) translate(0.5em, 0.3em);
 }
 
 /* -- ARROW 5      -- */
@@ -218,6 +222,10 @@ body {
 
 .arrow-on:before {
   background-color: var(--flecha-on);
+}
+
+.dato-secundario {
+  font-size: 1.5em;
 }
 
 @media (min-width: 600px) {
@@ -236,17 +244,19 @@ body {
     margin: 0.2em 0.2em;
   }
   .datos-trip {
-    /*background-color: black;*/
     grid-template-columns: none;
     grid-template-rows: 1fr 1fr 1fr;
     justify-content: center;
     align-items: center;
   }
 
+  /*.clima * {
+    font-size: 4em;
+  }
   .velocidad * {
     display: flex;
     align-self: center;
     align-items: center;
-    justify-content: center;
-  }
+    border: 2px;
+  }*/
 }

@@ -5,35 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Triciclo</title>
     <link rel="stylesheet" href="estilos.css" />
+    <script src="main.js"></script>
   </head>
   <body>
     <div class="pantalla">
-      <!--<div class="pantalla-clima">
+      <div class="pantalla-clima">
         <div class="clima">
-          <p class>
-            <span id="temperatura">%TEMPERATURA%</span>
+          <p class="clima">
+            <span id="temperatura">0</span>
             <sup class="units">&deg; C</sup>
           </p>
         </div>
         <div class="clima">
           <p>
-            <span id="humedad">%HUMEDAD%</span>
+            <span id="humedad">0</span>
             <sup class="units">%</sup>
           </p>
         </div>
-      </div>-->
+      </div>
       <div class="pantalla-principal">
-        <div class="flecha-izq" id="flecha-izq">
-          <div class="arrow-5 arrow-6 arrow-on"></div>
+        <div class="flecha-izq">
+          <div id="flecha-izq" class="arrow-5 arrow-6"></div>
         </div>
         <div class="velo">
           <p class="dato">
-            <span id="velocidad">%VEL%</span>
+            <span id="velocidad">0</span>
             <sup class="units">km/h</sup>
           </p>
         </div>
-        <div class="flecha-der" id="flecha-der">
-          <div class="arrow-5 arrow-on"></div>
+        <div class="flecha-der arrow-on">
+          <div id="flecha-der" class="arrow-5"></div>
         </div>
       </div>
 
@@ -42,13 +43,13 @@
           <p class="subtitulo">Bateria</p>
           <div>
             <p class="dato-secundario">
-              <span id="carga">%CARGA%</span>
+              <span id="carga">0</span>
               <sup class="units">%</sup>
             </p>
           </div>
           <div>
             <p class="dato-secundario">
-              <span id="temp_bat">%TEMP_BAT%</span>
+              <span id="temp_bat">0</span>
               <sup class="units">&deg; C</sup>
             </p>
           </div>
@@ -57,18 +58,13 @@
           <div class="subtitulo">Trip</div>
           <div>
             <p class="dato-secundario">
-              <span id="trip">%TRIP%</span>
+              <span id="trip">0</span>
               <sup class="units">km</sup>
             </p>
           </div>
           <div>
             <p class="dato-secundario">
-              <button
-                class="button button3"
-                onclick="location.href='/RELE=CHANGE'"
-              >
-                Reiniciar
-              </button>
+              <button id="reinicio" class="button button3">Reiniciar</button>
             </p>
           </div>
         </div>
@@ -77,7 +73,7 @@
           <div></div>
           <div>
             <p class="dato-secundario">
-              <span id="odometro">%ODO%</span>
+              <span id="odometro">0</span>
               <sup class="units">km</sup>
             </p>
           </div>
@@ -98,7 +94,6 @@
       </div>
     </div>
   </body>
-  <script src="main.js"></script>
 </html>
 <!-- 
      Nombre               Variable     Id HTML       Etiqueta
