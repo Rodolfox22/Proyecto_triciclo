@@ -5,21 +5,17 @@
   --fondo: black;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 html {
-  height: 100%;
-  min-width: 400px;
+  /*height: 100%;
+  min-width: 400px;*/
   background-color: black;
-  font-size: 1.5em;
 }
 
 body {
-  min-height: 100vh;
+  /*min-height: 100vh;*/
+  max-width: 100%; /* Limita el ancho del contenedor al ancho de la pantalla */
+  margin: 0 auto; /* Centra el contenedor en la pantalla */
+  max-height: 100%;
 }
 
 .titulo,
@@ -28,33 +24,25 @@ body {
   text-align: center;
   font-family: Arial Black;
   font-weight: bold;
-  font-size: 2rem;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
 }
 
 .dato {
   margin: auto;
-  line-height: 80px;
-}
-
-.clima * {
-  font-size: 1.5em;
+  line-height: 20vh;
 }
 
 .subtitulo {
-  font-size: 1.8em;
+  font-size: 5vh;
 }
 
 .button {
   background-color: rgb(209, 82, 73);
   color: rgb(218, 212, 212);
-  /*width: 200px;
-  height: 50px;*/
   border: var(--color-detalle);
   border-radius: 15px;
   font-family: fantasy;
-  font-size: 2vw;
   transition-duration: 0.4s;
 }
 .button:hover {
@@ -72,7 +60,7 @@ body {
   background-color: rgb(69, 70, 69);
   border-radius: 10px;
   font-size: 1.2em;
-  padding: 0px .3em;
+  padding: 0px 0.3em;
 }
 .button3:hover {
   background-color: rgb(126, 134, 126);
@@ -82,33 +70,25 @@ body {
 /*Div principales*/
 
 .pantalla-clima {
-  /*background-color: black;*/
   color: white;
   margin: 0 auto;
-  width: 95%;
+  width: 80%;
   display: flex;
   height: 1fr;
   align-self: center;
   justify-content: space-between;
-}
-
-.pantalla-clima > div {
-  margin: 5px 5px;
-  text-align: center;
-  font-size: 1.5vw;
+  font-size: 5vh;
 }
 
 .pantalla-principal {
-  /*background-color: black;*/
-  color: rgb(255, 255, 255);
   margin: 0 auto;
-  width: 95%;
-  height: 5fr;
-  display: grid;
-  grid-template-columns: 1fr 4fr 1fr;
-  justify-content: space-between;
+  width: 80%;
+  display: flex;
+  /*grid-template-columns: 1fr 5fr 1fr;
+  height: 50%;
+  justify-content: space-between;*/
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .flecha-izq,
@@ -122,7 +102,7 @@ body {
 .velo * {
   align-items: center;
   justify-content: center;
-  font-size: 2.8em;
+  font-size: 20vh;
 }
 
 .pantalla-secundario {
@@ -161,19 +141,17 @@ body {
   color: white;
   list-style: none;
   text-align: center;
-  font-size: 1.5em;
+  font-size: 1.2em;
   text-decoration: none;
 }
 
 .pantalla {
-  display: grid;
-  grid-template-rows: 1fr 3fr 3fr;
-  overflow: hidden;
-  min-height: 100vh;
-}
+  display: flex;
+  flex-wrap: wrap;
+ }
 
 .units {
-  font-size: 0.7em;
+  font-size: 3vh;
 }
 
 .caja {
@@ -225,7 +203,7 @@ body {
 }
 
 .dato-secundario {
-  font-size: 1.5em;
+  font-size: 5vh;
 }
 
 @media (min-width: 600px) {
@@ -249,14 +227,4 @@ body {
     justify-content: center;
     align-items: center;
   }
-
-  /*.clima * {
-    font-size: 4em;
-  }
-  .velocidad * {
-    display: flex;
-    align-self: center;
-    align-items: center;
-    border: 2px;
-  }*/
 }

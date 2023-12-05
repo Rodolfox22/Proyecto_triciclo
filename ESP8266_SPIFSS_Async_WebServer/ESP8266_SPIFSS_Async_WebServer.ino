@@ -5,7 +5,7 @@
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
-// SoftwareSerial ComSerial(D5, D6);
+SoftwareSerial ComSerial(D5, D6);
 
 String processor(const String &var)
 {

@@ -9,7 +9,6 @@ let lectura = [
   ["temp_bat", "25"],
   ["carga", "80"],
 ];
-let direccion = "derecha";
 
 window.onload = inicio;
 
@@ -20,16 +19,6 @@ function inicio() {
 function reinicio() {
   trip = 0;
   document.getElementById("trip").innerHTML = trip;
-  if (direccion == "derecha") {
-    direccion = "izquierda";
-  } else if (direccion == "izquierda") {
-    direccion = "baliza";
-  } else if (direccion == "baliza") {
-    direccion = "";
-  } else {
-    direccion = "derecha";
-  }
-  console.log(direccion);
 }
 
 setInterval(function () {
@@ -69,41 +58,6 @@ function actualizar() {
   }
 }
 
-function giros() {
-  const giroDer = document.getElementById("flecha-der");
-  const giroIz = document.getElementById("flecha-izq");
-
-  if ((direccion = "derecha")) {
-    destellador(giroDer);
-    console.log("Derecha");
-  }
-
-  if ((direccion = "izquierda")) {
-    destellador(giroIz);
-  }
-
-  if ((direccion = "baliza")) {
-    destellador(giroDer, giroIz);
-  }
-}
-
-function destellador(luz, luz1=null) {
-  function destellar() {
-    luz.classList.add("arrow-on");
-    luz1.classList.add("arrow-on");
-    //console.log("Encendido");
-
-    setTimeout(() => {
-      luz.classList.remove("arrow-on");
-      luz1.classList.remove("arrow-on");
-      //console.log(luz);
-      // Llamar recursivamente después de un tiempo
-      setTimeout(destellar, 400);
-    }, 400);
-  }
-  destellar();
-}
-
 function procesarDatos(texto) {
   //TODO: Aca recibo el texto serial, y tengo que desdoblarlo para realizar todos los innerHTML
   /*datos_recibidos++;
@@ -133,3 +87,20 @@ function procesarDatos(texto) {
 // Odometro               lectura[4] "odometro"     "/ODO"
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
+
+// Verificar si la API está disponible en el navegador
+if ('wakeLock' in navigator) {
+  // Solicitar el bloqueo de la pantalla
+  navigator.wakeLock.request('screen')
+    .then((wakeLock) => {
+      console.log('Pantalla bloqueada con éxito');
+
+      // Puedes liberar el bloqueo cuando ya no lo necesites
+      // wakeLock.release();
+    })
+    .catch((error) => {
+      console.error('Error al bloquear la pantalla:', error);
+    });
+} else {
+  console.warn('La API Wake Lock no está disponible en este navegador.');
+}
