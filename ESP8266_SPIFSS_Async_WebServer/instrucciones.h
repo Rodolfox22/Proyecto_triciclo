@@ -7,10 +7,7 @@
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
 
-#define CANTDATOS 7
-
-String dato_recibido = "";
-String dato_actual = "";
+String datosJson;
 
 /*
 const char *ssid = "UNRaf_Libre";
@@ -27,15 +24,10 @@ IPAddress ip(192, 168, 0, 20);
 IPAddress gateway(192, 168, 0, 1);
 IPAddress subnet(255, 255, 255, 0);
 
-const int Rele_Pin = 2;
-
 unsigned long tiempo_anterior = 0;
 unsigned long tiempo_solicitud = 2000;
 
-String Estado_Pin;
-
-int datos_recibidos=0;
-String variables[] = {"210","60", "0", "0", "250", "325", "85"};
+int datos_recibidos = 0;
 float temperatura = 21.0;
 int humedad = 60;
 int velocidad = 0;
@@ -45,3 +37,7 @@ float temp_bat = 32.5;
 int carga = 85;
 
 void setearVariables();
+void servidor();
+String processor(const String &var);
+void modoAP();
+void modoSTA();

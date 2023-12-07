@@ -10,21 +10,22 @@
   <body>
     <div class="pantalla">
       <div class="pantalla-clima">
-          <p class="clima">
-            <span id="temperatura">0</span>
-            <sup class="units">&deg; C</sup>
-          </p>
-          <p class="clima">
-            <span id="humedad">0</span>
-            <sup class="units">%</sup>
-          </p>
+        <p class="clima">
+          <span id="temperatura">0</span>
+          <sup class="units">&deg; C</sup>
+        </p>
+        <p class="clima">
+          <span id="humedad">0</span>
+          <sup class="units">%</sup>
+        </p>
       </div>
+
       <div class="pantalla-principal">
         <div class="flecha-izq">
           <div id="flecha-izq" class="arrow-5 arrow-6 arrow-on"></div>
         </div>
         <div class="velo">
-          <p class="dato">
+          <p class="subtitulo veloc">
             <span id="velocidad">0</span>
             <sup class="units">km/h</sup>
           </p>
@@ -35,7 +36,7 @@
       </div>
 
       <div class="pantalla-secundario">
-        <div class="datos-bateria">
+        <div class="datos">
           <p class="subtitulo">Bateria</p>
           <div>
             <p class="dato-secundario">
@@ -50,7 +51,7 @@
             </p>
           </div>
         </div>
-        <div class="datos-trip">
+        <div class="datos datos-trip">
           <div class="subtitulo">Trip</div>
           <div>
             <p class="dato-secundario">
@@ -60,11 +61,11 @@
           </div>
           <div>
             <p class="dato-secundario">
-              <button id="reinicio" class="button button3">Reiniciar</button>
+              <button id="reinicio" class="button">Reiniciar</button>
             </p>
           </div>
         </div>
-        <div class="datos-odometro">
+        <div class="datos">
           <div class="subtitulo">Odometro</div>
           <div></div>
           <div>
@@ -74,19 +75,6 @@
             </p>
           </div>
         </div>
-        <!--<div class="caja">
-          <p>
-            <button class="button button2" onclick="location.href='/RELE=ON'">
-              Encender
-            </button>
-          </p>
-          <p>
-            <button class="button" onclick="location.href='/RELE=OFF'">
-              Apagar
-            </button>
-          </p>
-          <p class="titulo">Estado: %ESTADO_RELE%</p>
-        </div>-->
       </div>
     </div>
   </body>

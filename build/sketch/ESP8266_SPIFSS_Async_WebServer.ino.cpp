@@ -109,32 +109,7 @@ void setup()
     return;
   }
 
-  // Connect to Wi-Fi
-  WiFi.mode(WIFI_STA);
-  WiFi.config(ip, gateway, subnet);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(1000);
-    Serial.println("Connecting to WiFi..");
-  }
-  Serial.println(WiFi.localIP());
-
-  // Modo Acces point
-  /*
-      WiFi.mode(WIFI_AP);
-      WiFi.softAP(ssid_AP, password_AP);
-
-      Serial.print("Servidor: ");
-      Serial.println(WiFi.softAPIP());
-      Serial.print("Local: ");
-      Serial.println(WiFi.localIP());
-      delay(1000);
-    */
-
-  // TODO como conectar directamente? necesita una instruccion especial para que funcione como servidor?
-
-  // Route for root / web page
+    // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/index.html", String(), false, processor); });
 

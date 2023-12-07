@@ -85,11 +85,9 @@ void loop()
 
       Serial.print("Trip: ");
       Serial.println(lectura[3]);
-
-      lecturas = procesarDato(lectura[], CANTDATOS);
-      Serial1.print(lecturas);
-      Serial.println(lecturas);
     }
+  // todo: cuando recibo confirmacion de datos leidos, envio nuevos datos
+  enviarDatos();
 
   // print the string when a newline arrives:
   if (datoRecibidoCompleto)
@@ -108,38 +106,57 @@ void contadorPulsos()
   anterior = micros();
 }
 
+void datosRecibidos(String datos)
+{
+  // String json = "{\"text\":\"myText\",\"id\":10,\"status\":true,\"value\":3.14}";
+
+  StaticJsonDocument<300> doc;
+  DeserializationError error = deserializeJson(doc, datos);
+  if (error)
+  {
+    return;
+  }
+
+  guinho = doc["guinho"];
+  trip = doc["trip"];
+  cicloJS = doc["cicloJS"];
+
+  Serial.print("Guinho: ");
+  Serial.println(guinho);
+  Serial.print("Trip: ");
+  Serial.println(trip);
+  Serial.print("Ciclo: ");
+  Serial.println(cicloJS);
+}
+
 void serialEvent()
 {
-  while (Serial1.available())
+  String datosJS;
+  if (Serial1.available())
   {
-    char inChar = (char)Serial1.read();
-    inputString += inChar;
-    if (inChar == '\n')
-    {
-      datoRecibidoCompleto = true;
-    }
+    datosJS = Serial1.readString();
+    datosRecibidos(datosJS);
   }
 }
 
 // Convierte en una palabra los datos recibidos
-String procesarDato(int lecturadatos[])
+void enviarDatos()
 {
-  String datoCompleto = "Cantidad de datos:" + String(CANTDATOS);
-  String separador = ",";
+  String valores;
+  StaticJsonDocument<300> doc;
 
-  for (int i = 0; i < CANTDATOS; i++)
-  {
-    datoCompleto += String(lecturadatos[i]);
+  doc["humedad"] = "80";
+  doc["temperatura"] = "21";
+  doc["velocidad"] = "12";
+  doc["trip"] = "155";
+  doc["odometro"] = "432";
+  doc["temp_bat"] = "25";
+  doc["carga"] = "80";
+  doc["guinho"] = "";
 
-    if (i < CANTDATOS - 1) // comento esta linea para probar si funciona el codigo
-      datoCompleto += separador;
-  }
-
-  datoCompleto += "/";
-
-  ultimoDato = datoCompleto;
-  // Serial1.print(datoCompleto);
-  return datoCompleto;
+  serializeJson(doc, valores);
+  Serial.println(valores);
+  Serial1.println(valores);
 }
 
 void loguearDatos()
