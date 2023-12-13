@@ -2,7 +2,6 @@
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
 #include <SoftwareSerial.h>
-#include <ArduinoJson.h>
 
 #include "instrucciones.h"
 
@@ -13,7 +12,6 @@ void setup()
 {
   Serial.begin(9600);
   ComSerial.begin(9600);
-  pinMode(Rele_Pin, OUTPUT);
   tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
@@ -23,24 +21,13 @@ void setup()
   }
 
   modoAP();
-  // modoSTA();
+  //modoSTA();
 
   servidor();
 }
 
 void loop()
 {
-}
-
-void setearVariables()
-{
-  temperatura = variables[0].toFloat() / 10.0;
-  humedad = variables[1].toInt();
-  velocidad = variables[2].toInt();
-  trip = variables[3].toInt();
-  odometro = variables[4].toInt();
-  temp_bat = variables[5].toFloat() / 10.0;
-  carga = variables[6].toInt();
 }
 
 void servidor()
@@ -63,8 +50,8 @@ void servidor()
             {
      // Leer el cuerpo de la solicitud
     datosJson = request->getParam("plain")->value();
-    ComSerial.println(json);
-    Serial.prinln(json);
+    ComSerial.println(datosJson);
+    Serial.println(datosJson);
     // Enviar respuesta al cliente
     request->send(200, "text/plain", "Datos recibidos correctamente"); });
 
@@ -105,21 +92,7 @@ void modoSTA()
 
 String processor(const String &var)
 {
-
-  if (var == "ESTADO_RELE")
-  {
-    if (digitalRead(Rele_Pin) == 0)
-    {
-      Estado_Pin = "Encendido";
-    }
-    else
-    {
-      Estado_Pin = "Apagado";
-    }
-    return Estado_Pin;
-  }
-
-  if (var == "ACTUALIZAR")
+    if (var == "ACTUALIZAR")
   {
     if (ComSerial.available())
     {

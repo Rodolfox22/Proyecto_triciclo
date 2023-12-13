@@ -7,7 +7,9 @@
     "editor.defaultFormatter": "ms-vscode.cpptools" //"ms-python.python"
   },
   "files.associations": {
-    "*.tcc": "cpp"
+    "*.tcc": "cpp",
+    "initializer_list": "cpp",
+    "string_view": "cpp"
   },
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"

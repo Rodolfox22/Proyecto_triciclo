@@ -7,7 +7,6 @@
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
 
-String datosJson;
 
 /*
 const char *ssid = "UNRaf_Libre";
@@ -36,7 +35,8 @@ int odometro = 250;
 float temp_bat = 32.5;
 int carga = 85;
 
-void setearVariables();
+String datosJson;
+
 void servidor();
 String processor(const String &var);
 void modoAP();

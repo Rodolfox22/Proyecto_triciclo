@@ -1,3 +1,4 @@
+//todo: revisar si voy a necesitar envios y timer_destello
 let envios = 0,
   trip = 0,
   timer_destello = 0;
@@ -15,9 +16,12 @@ let cuentaGuinho = 0;
 const GUINHO = ["", "derecha", "izquierda", "baliza"];
 let giroDer, giroIz;
 let envioJS = {};
+let objetoWakeLock = null;
+
 window.onload = inicio;
 
 function inicio() {
+  pantallaEncendida();
   giroDer = document.getElementById("flecha-der");
   giroIz = document.getElementById("flecha-izq");
   document.getElementById("reinicio").onclick = reinicioTrip;
@@ -102,23 +106,17 @@ function actualizar() {
 
 function procesarDatos(texto) {
   //TODO: Aca recibo el texto serial, y tengo que desdoblarlo para realizar todos los innerHTML
-  /*datos_recibidos++;
-    char cantDatos = ComSerial.read(); // En el string envío la cantidad de datos existentes
-    int cant_datos = int(cantDatos);
+  const datos = JSON.parse(texto);
+  lectura[buscarLectura("humedad")][1] = datos.humedad;
+  lectura[buscarLectura("temperatura")][1] = datos.temperatura;
+  lectura[buscarLectura("velocidad")][1] = datos.velocidad;
+  lectura[buscarLectura("trip")][1] = datos.trip;
+  lectura[buscarLectura("odometro")][1] = datos.odometro;
+  lectura[buscarLectura("temp_bat")][1] = datos.temp_bat;
+  lectura[buscarLectura("carga")][1] = datos.carga;
+  cuentaGuinho = GUINHO.indexOf(datos.guinho);
 
-    for (int indice = 0; indice < cant_datos; indice++)
-    {
-      if (indice < cant_datos - 1)
-      {
-        variables[indice] = ComSerial.readStringUntil(',');
-      }
-      else
-      {
-        variables[indice] = ComSerial.readStringUntil('/');
-      }
-    }*/
   console.log(texto);
-  //const cant_datos = texto.slice();
 }
 
 /* Funcionalidad dinamica*/
@@ -142,7 +140,7 @@ function guinhos(orden) {
 setInterval(function () {
   giros();
   timer_destello++;
-}, 500);
+}, 300);
 
 function giros() {
   let guinho = "";
@@ -186,29 +184,32 @@ function buscarLectura(valor) {
   }
   return indice;
 }
-//                        Variable     Id HTML       Etiqueta
-// Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
-// Humedad                lectura[1] "humedad"      "/HUMEDAD"
-// Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
-// Trip                   lectura[3] "trip"         "/TRIP"
-// Odometro               lectura[4] "odometro"     "/ODO"
-// temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
-// Carga batería          lectura[6] "carga"        "/CARGA"
 
 // Verificar si la API está disponible en el navegador
-if ("wakeLock" in navigator) {
-  // Solicitar el bloqueo de la pantalla
-  navigator.wakeLock
-    .request("screen")
-    .then((wakeLock) => {
+async function pantallaEncendida() {
+  if ("wakeLock" in navigator) {
+    // Solicitar el bloqueo de la pantalla
+    try {
+      objetoWakeLock = await navigator.wakeLock.request("screen");
       console.log("Pantalla bloqueada con éxito");
-
+      //console.log(objetoWakeLock);
       // Puedes liberar el bloqueo cuando ya no lo necesites
       // wakeLock.release();
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error("Error al bloquear la pantalla:", error);
-    });
-} else {
-  console.warn("La API Wake Lock no está disponible en este navegador.");
+    }
+  } else {
+    console.warn("La API Wake Lock no está disponible en este navegador.");
+    alert(
+      "No se encuentra disponible el servicio para mantener la pantalla encendida."
+      );
+  }
 }
+      //                        Variable     Id HTML       Etiqueta
+      // Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
+      // Humedad                lectura[1] "humedad"      "/HUMEDAD"
+      // Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
+      // Trip                   lectura[3] "trip"         "/TRIP"
+      // Odometro               lectura[4] "odometro"     "/ODO"
+      // temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
+      // Carga batería          lectura[6] "carga"        "/CARGA"

@@ -6,9 +6,12 @@
 #include <SD.h>
 #include <Wire.h>
 #include "RTClib.h"
+#include <ArduinoJson.h>
+
 #include "encabezados.h"
 
 RTC_DS1307 RTC;
+StaticJsonDocument<300> estadoPant;
 // Adafruit_ADS1115 ads;
 
 void setup()
@@ -22,9 +25,15 @@ void setup()
   Wire.begin();
   RTC.begin();
   if (!RTC.isrunning())
+  {
     Serial.println("RTC is NOT running!");
+    reloj = false;
+  }
   else
+  {
     Serial.println("RTC running");
+    reloj = true;
+  }
 
   // RTC.adjust(DateTime(__DATE__, __TIME__)); //Cargarlo una vez para setearlo y despues sacar frase para que cuando se reinicio no vuelva a la fecha vieja
 
@@ -62,41 +71,43 @@ void setup()
   /////////   CONTADOR   ////////
   attachInterrupt(digitalPinToInterrupt(3), contadorPulsos, RISING);
 
-  // Inicializa la lectura de datos
-  for (int i = 0; i < CANTDATOS; i++)
-  {
-    lectura[i] = 0;
-  }
+  // attachInterrupt(digitalPinToInterrupt(2), contadorPulsos, RISING);
+  // attachInterrupt(digitalPinToInterrupt(18), contadorPulsos, RISING);
+  // attachInterrupt(digitalPinToInterrupt(19), contadorPulsos, RISING);
+  // attachInterrupt(digitalPinToInterrupt(20), contadorPulsos, RISING);
+  // attachInterrupt(digitalPinToInterrupt(21), contadorPulsos, RISING);
+  pinMode(PINGDERECHO, INPUT);
+  pinMode(PINGIZQUIERDO, INPUT);
+  pinMode(PINBALIZA, INPUT);
+  pinMode(PINLDERECHO, OUTPUT);
+  pinMode(PINLIZQUIERDO, OUTPUT);
 }
 
 void loop()
 {
   TiempoImprime = millis() - UltimoTiempoImprime;
   if (TiempoImprime > DeltaTImprime)
+  {
+    UltimoTiempoImprime = millis();
     //   loguearDatos();
+  }
 
-    // testeo el muestreo del envio de datos por el puerto
-    if (TIEMPOSUMA <= millis() - anteriorSuma)
-    {
-      anteriorSuma = millis();
-      lectura[3]++;
-      if (lectura[3] > 250)
-        lectura[3] = 1;
-
-      Serial.print("Trip: ");
-      Serial.println(lectura[3]);
-    }
-  // todo: cuando recibo confirmacion de datos leidos, envio nuevos datos
-  enviarDatos();
+  leerBotones();
+  setearLuces();
 
   // print the string when a newline arrives:
   if (datoRecibidoCompleto)
   {
+    enviarDatos();
     Serial.println(inputString);
     // clear the string:
     inputString = "";
     datoRecibidoCompleto = false;
   }
+
+  leerBotones();
+  comprobar();
+  setearLuces();
 }
 
 // Cada vez que tengo una interrupcion llamo a esta funcion y me devuelve la cantidad de microsegundo que hay entre pulso y pulso
@@ -110,22 +121,21 @@ void datosRecibidos(String datos)
 {
   // String json = "{\"text\":\"myText\",\"id\":10,\"status\":true,\"value\":3.14}";
 
-  StaticJsonDocument<300> doc;
-  DeserializationError error = deserializeJson(doc, datos);
+  DeserializationError error = deserializeJson( estadoPant, datos);
   if (error)
   {
     return;
   }
 
-  guinho = doc["guinho"];
-  trip = doc["trip"];
-  cicloJS = doc["cicloJS"];
+  guinho = estadoPant["guinho"];
+  trip = estadoPant["trip"];
+  cicloJS = estadoPant["cicloJS"];
 
   Serial.print("Guinho: ");
-  Serial.println(guinho);
-  Serial.print("Trip: ");
-  Serial.println(trip);
-  Serial.print("Ciclo: ");
+  Serial.print(guinho);
+  Serial.print("\tTrip: ");
+  Serial.print(trip);
+  Serial.print("\tCiclo: ");
   Serial.println(cicloJS);
 }
 
@@ -136,6 +146,7 @@ void serialEvent()
   {
     datosJS = Serial1.readString();
     datosRecibidos(datosJS);
+    datoRecibidoCompleto = true;
   }
 }
 
@@ -143,25 +154,28 @@ void serialEvent()
 void enviarDatos()
 {
   String valores;
-  StaticJsonDocument<300> doc;
+  StaticJsonDocument<300> sensoresJson;
 
-  doc["humedad"] = "80";
-  doc["temperatura"] = "21";
-  doc["velocidad"] = "12";
-  doc["trip"] = "155";
-  doc["odometro"] = "432";
-  doc["temp_bat"] = "25";
-  doc["carga"] = "80";
-  doc["guinho"] = "";
+  sensoresJson["humedad"] = humedad;
+  sensoresJson["temperatura"] = temperatura;
+  sensoresJson["velocidad"] = velocidad;
+  sensoresJson["trip"] = trip;
+  sensoresJson["odometro"] = odometro;
+  sensoresJson["temp_bat"] = temp_bat;
+  sensoresJson["carga"] = carga;
+  sensoresJson["guinho"] = guinhoActual;
 
-  serializeJson(doc, valores);
+  serializeJson(sensoresJson, valores);
   Serial.println(valores);
+  // Se envían los datos al ESP8266
   Serial1.println(valores);
 }
 
 void loguearDatos()
 {
   String guardarLog = prepararDatosSD();
+  guardarLog += "\nOdometro: ";
+  guardarLog += odometro;
   imprimirEnSD(guardarLog);
 }
 
@@ -183,8 +197,8 @@ String prepararDatosSD()
   dataString += String(now.second(), DEC);
   dataString += ",";
 
-  int vel = calcularVelocidad(rueda, contador);
-  dataString += String(vel);
+  velocidad = calcularVelocidad(rueda, contador);
+  dataString += String(velocidad);
   dataString += ",";
 
   // ADS1115 Tomar valor promedio
@@ -240,18 +254,132 @@ void imprimirEnSD(String &logActual)
   contador = 0;
 }
 
-// Calcular Velocidad     lectura[2]
+// Calcular Velocidad
 int calcularVelocidad(int diametro, int pulsos_por_vuelta)
 {
   float velocidad_km_h = 0;
   if (pulsos_por_vuelta > 0)
   {
-    float circunferencia = PI * float(diametro) / 100;              // circunferencia de la rueda en metros
-    float tiempo_entre_pulsos_seg = pulsos_por_vuelta / 1000000.0;  // tiempo entre pulsos en segundos
-    float velocidad_m_s = circunferencia / tiempo_entre_pulsos_seg; // velocidad en m/s
-    velocidad_km_h = velocidad_m_s * 3.6;                           // velocidad en km/h
+    // circunferencia de la rueda en metros
+    float circunferencia = PI * float(diametro) / 100.0;
+    // tiempo entre pulsos en segundos
+    float tiempo_entre_pulsos_seg = pulsos_por_vuelta / 1000000.0;
+    // velocidad en m/s
+    float velocidad_m_s = circunferencia / tiempo_entre_pulsos_seg;
+    // velocidad en km/h
+    velocidad_km_h = velocidad_m_s * 3.6;
   }
   return int(velocidad_km_h);
+}
+
+void leerBotones()
+{
+  if (millis() - anteriorGuinho >= TIEMPOGUINHO)
+  {
+    if (digitalRead(PINGDERECHO))
+    {
+      gDerecho = !gDerecho;
+      gIzquierdo = 0;
+      baliza = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+
+    if (digitalRead(PINGIZQUIERDO))
+    {
+      gIzquierdo = !gIzquierdo;
+      gDerecho = 0;
+      baliza = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+
+    if (digitalRead(PINBALIZA))
+    {
+      baliza = !baliza;
+      gIzquierdo = 0;
+      gDerecho = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+
+    // Lógica para manejar comandos por puerto serie
+    if (guinho == "derecha")
+    {
+      gDerecho = 1;
+      gIzquierdo = 0;
+      baliza = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+
+    if (guinho == "izquierda")
+    {
+      gIzquierdo = 1;
+      gDerecho = 0;
+      baliza = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+
+    if (guinho == "baliza")
+    {
+      baliza = 1;
+      gIzquierdo = 0;
+      gDerecho = 0;
+      anteriorGuinho = millis();
+      return;
+    }
+    baliza = 0;
+    gIzquierdo = 0;
+    gDerecho = 0;
+    anteriorGuinho = millis();
+  }
+}
+
+void setearLuces()
+{
+  if (millis() - anteriorDestello >= TIEMPODESTELLO)
+  {
+    anteriorDestello = millis();
+    encender();
+
+    if (gDerecho)
+    {
+      guinhoActual = "derecha";
+      derecho = !derecho;
+      izquierdo = 0;
+      return;
+    }
+
+    if (gIzquierdo)
+    {
+      guinhoActual = "izquierda";
+      izquierdo = !izquierdo;
+      derecho = 0;
+      return;
+    }
+
+    if (baliza)
+    {
+      guinhoActual = "baliza";
+      derecho = !derecho;
+      izquierdo = derecho;
+      return;
+    }
+
+    // Si no hay pulsadores activados ni comando en guinho
+    guinhoActual = "";
+    derecho = 0;
+    izquierdo = 0;
+    baliza = 0;
+  }
+}
+
+void encender()
+{
+  digitalWrite(PINLIZQUIERDO, derecho);
+  digitalWrite(PINLDERECHO, izquierdo);
 }
 
 // Temperatura ambiente   lectura[0]

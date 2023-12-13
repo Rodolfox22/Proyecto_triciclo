@@ -18,6 +18,9 @@ body {
 .pantalla {
   display: flex;
   flex-wrap: wrap;
+  width: 90%;
+  height: 90%;
+  justify-content: space-between;
 }
 
 .pantalla-clima {
@@ -69,6 +72,7 @@ body {
   display: grid;
   min-height: 30vh;
   align-items: center;
+  position: relative;
 }
 
 .subtitulo {
@@ -119,6 +123,26 @@ body {
   text-decoration: none;
 }
 
+.odometro {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+.bateria {
+  position: absolute;
+  left: 40px;
+  top: 10px;
+}
+
+.datos-trip{
+  position: absolute;
+  top: 80%;
+  right: 50%;
+  left: 50%;
+display: flex;
+flex-wrap: wrap;
+}
+
 .units {
   font-size: 3vh;
 }
@@ -164,7 +188,7 @@ body {
 
 @media (min-width: 600px) {
   .pantalla-principal {
-   height: 45vh;
+    height: 45vh;
   }
 
   .pantalla-secundario {
@@ -180,6 +204,16 @@ body {
 
   .datos-trip {
     margin: none;
+    position: unset;
+  }
+
+  .odometro {
+    position: unset;
+    
+  }
+  .bateria {
+    position: unset;
+    
   }
 
   .velo * {
@@ -193,5 +227,4 @@ body {
   .dato-secundario {
     font-size: 5vh;
   }
-
 }
