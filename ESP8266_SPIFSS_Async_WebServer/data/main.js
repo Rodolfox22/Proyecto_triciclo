@@ -14,6 +14,9 @@ let lectura = [
 
 let cuentaGuinho = 0;
 const GUINHO = ["", "derecha", "izquierda", "baliza"];
+const TEXTODERECHA = "derecha";
+const TEXTOIZQUIERDA = "izquierda";
+const TEXTOBALIZA = "baliza";
 let giroDer, giroIz;
 let envioJS = {};
 let objetoWakeLock = null;
@@ -26,13 +29,13 @@ function inicio() {
   giroIz = document.getElementById("flecha-izq");
   document.getElementById("reinicio").onclick = reinicioTrip;
   giroDer.onclick = function () {
-    guinhos("derecha");
+    guinhos(TEXTODERECHA);
   };
   giroIz.onclick = function () {
-    guinhos("izquierda");
+    guinhos(TEXTOIZQUIERDA);
   };
   document.getElementById("velocidad").onclick = function () {
-    guinhos("baliza");
+    guinhos(TEXTOBALIZA);
   };
 }
 
@@ -150,19 +153,19 @@ function giros() {
     guinho = "";
   }
 
-  if (guinho == "derecha") {
+  if (guinho == TEXTODERECHA) {
     giroDer.classList.add("arrow-on");
     giroIz.classList.remove("arrow-on");
     return;
   }
 
-  if (guinho == "izquierda") {
+  if (guinho == TEXTOIZQUIERDA) {
     giroIz.classList.add("arrow-on");
     giroDer.classList.remove("arrow-on");
     return;
   }
 
-  if (guinho == "baliza") {
+  if (guinho == TEXTOBALIZA) {
     giroDer.classList.add("arrow-on");
     giroIz.classList.add("arrow-on");
     return;
@@ -202,14 +205,14 @@ async function pantallaEncendida() {
     console.warn("La API Wake Lock no está disponible en este navegador.");
     alert(
       "No se encuentra disponible el servicio para mantener la pantalla encendida."
-      );
+    );
   }
 }
-      //                        Variable     Id HTML       Etiqueta
-      // Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
-      // Humedad                lectura[1] "humedad"      "/HUMEDAD"
-      // Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
-      // Trip                   lectura[3] "trip"         "/TRIP"
-      // Odometro               lectura[4] "odometro"     "/ODO"
-      // temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
-      // Carga batería          lectura[6] "carga"        "/CARGA"
+//                        Variable     Id HTML       Etiqueta
+// Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
+// Humedad                lectura[1] "humedad"      "/HUMEDAD"
+// Calcular Velocidad     lectura[2] "velocidad"    "/VEL"
+// Trip                   lectura[3] "trip"         "/TRIP"
+// Odometro               lectura[4] "odometro"     "/ODO"
+// temperatura bateria    lectura[5] "temp_bat"     "/TEMP_BAT"
+// Carga batería          lectura[6] "carga"        "/CARGA"

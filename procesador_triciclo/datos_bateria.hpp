@@ -38,7 +38,7 @@ float voltaje = 0.0;              // voltaje calculado
 float voltaje_de_bateria = 0.0;   // voltaje de bateria
 float diferencia_tension_carga_descarga = 0.0;
 int porcentaje_carga = 0;
-int const medicion_voltaje = A0; // lectura de voltaje
+// int const medicion_voltaje = A0; // lectura de voltaje reemplazado por PINCARGABAT
 int Porcentaje_carga = 0;
 
 // variables de delay------------------
@@ -52,13 +52,13 @@ unsigned long retardo_1 = 2000;
 float Temperatura = 0.0;
 float temperatura_ok = 0.0;
 float error_absoluto = 1.0;
-OneWire ourWire(9);                  // Se establece el pin 6  como bus OneWire
+OneWire ourWire(PINDS18B20);         // Se establece el pin de bus OneWire
 DallasTemperature sensors(&ourWire); // Se declara una variable u objeto para nuestro sensor
 
 // variables sensor humedad y temperatura DHT-------------------------
 
-#define DHTTYPE DHT22  // Sensor DHT22
-const int DHTPin = 10; //  Pin donde está conectado el sensor
+#define DHTTYPE DHT22      // Sensor DHT22
+const int DHTPin = PINDHT; //  Pin donde está conectado el sensor
 float humedad_ambiente = 0.0;
 float temperatura_ambiente = 0.0;
 DHT dht(DHTPin, DHTTYPE); // definimos pin y tipo de sensor para libreria
@@ -70,9 +70,9 @@ float t = 0.0;
 float h = 0.0;
 float T = 0.0;
 //---------------------------------------------------------INICIO PROGRAMA-------------------------------------------------------------------------------------------
-void setup() //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+void inicializarLecturas() //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 {
-  //Serial.begin(9600);
+  // Serial.begin(9600);
   sensors.begin(); // Se inicia el sensor de temperatura DS18B20
   dht.begin();     // Se inicia el sensor de humedad y temperatura
 
@@ -82,8 +82,8 @@ void setup() //-----------------------------------------------------------------
   Wire.onRequest(eventoSolicitud); // registrar evento de solicitud de datos
   Wire.onReceive(eventoRecepcion); // registrar evento de recepcion de datos
 }
-
-void loop() //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Realiza la lectura de sensores de carga, temperatura y humedad
+void lecturasSensores() //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 {
   if (millis() - tiempoUltimaLectura > 3000) // delay de encendido realizado con millis para no clavar el micro
   {
@@ -91,7 +91,7 @@ void loop() //------------------------------------------------------------------
     // BUCLE MEDICION DE CARGA-----------------------------------------------------------------------------
     while (muestras_count < NUM_muestras)
     {
-      sum += analogRead(medicion_voltaje); // tomar un número de muestras analógicas y sumarlas
+      sum += analogRead(PINCARGABAT); // tomar un número de muestras analógicas y sumarlas
       muestras_count++;
     }
     /*calcular la tensión de utilizar 5,0 para una tensión 5.0V ADC de referencia 5.015V es la tensión de referencia calibrada
@@ -102,8 +102,7 @@ void loop() //------------------------------------------------------------------
     // divide por 11.
     // 11.132 es el valor calibrado del división de tensión
 
-    voltaje_de_bateria = voltaje * 11.132;
-    diferencia_tension_carga_descarga = (voltaje_de_bateria - 46.4*0.0); // 46.4 voltaje de referencia tomado para bateria descargada y 50.8 para bateria cargada
+    diferencia_tension_carga_descarga = (voltaje_de_bateria - 46.4 * 0.0); // 46.4 voltaje de referencia tomado para bateria descargada y 50.8 para bateria cargada
 
     if (diferencia_tension_carga_descarga >= 0)
     {
@@ -140,7 +139,7 @@ void loop() //------------------------------------------------------------------
 
     // impresion monitor serie-----------------------------------------------------------------------------
 
-    Serial.print("\t\t--- Bateria ---\nTension: ");
+    /*Serial.print("\t\t--- Bateria ---\nTension: ");
     Serial.print(voltaje_de_bateria);
     Serial.print(" V\t");
 
@@ -159,8 +158,7 @@ void loop() //------------------------------------------------------------------
     Serial.print("Temperatura: ");
     Serial.print(temperatura_ambiente);
     Serial.println(" °C");
-/*
-    Serial.print("diferencia_tension_carga_descarga : ");
+     Serial.print("diferencia_tension_carga_descarga : ");
     Serial.print(diferencia_tension_carga_descarga);
     Serial.println(" v ");*/
 
@@ -173,7 +171,7 @@ void loop() //------------------------------------------------------------------
     tiempoUltimaLectura_1 = millis(); // actualizamos el tiempo de la última lectura
   }
 
-} // fin void loop---------------------------------------------------------------------------------------------------
+} 
 
 // funciones -----------------------------------------------------------------------------------
 void eventoRecepcion()

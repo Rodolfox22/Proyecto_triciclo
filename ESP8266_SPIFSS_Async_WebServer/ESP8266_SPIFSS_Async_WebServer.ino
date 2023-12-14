@@ -6,6 +6,7 @@
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
+//D5 Tx --- D6 Rx
 SoftwareSerial ComSerial(D5, D6);
 
 void setup()
@@ -38,6 +39,10 @@ void servidor()
   //  Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/estilos.css", "text/css"); });
+  
+  //  Route to load icon file
+  server.on("/Unraf.svg", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/Unraf.svg", "image/svg+xml"); });
 
   // Route to load main.js file
   server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
