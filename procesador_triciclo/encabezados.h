@@ -1,7 +1,7 @@
-#define DeltaTImprime 120000  // muestreo de datos en SD [ms]
-#define TIEMPOSUMA 1000
-#define TIEMPOGUINHO 200
-#define TIEMPODESTELLO 300
+#define DeltaTImprime 120000 // muestreo de datos en SD [ms]
+#define TIEMPODISTANCIA 1000 //refresco de datos de velocidad y distancia
+#define TIEMPOGUINHO 50      //refresco de datos de lectura de botones
+#define TIEMPODESTELLO 600   //tiempo de destello de guiños
 #define PINGDERECHO 2
 #define PINGIZQUIERDO 4
 #define PINBALIZA 5
@@ -20,32 +20,37 @@ void enviarDatos();
 void loguearDatos();
 void imprimirEnSD(String &dato);
 void guardarOdometro(String &logActual);
-int buscarDatoEnArchivo(String &variableBuscada);
+int buscarEnSD(String &variableBuscada);
 int calcularVelocidad(int rueda, int pulsosPorVuelta);
 void calcularDistancia();
 String prepararDatosSD();
 void leerBotones();
+void escucharPuerto();
 void setearLuces();
 void encender();
 void recuperarDatos();
+void verOdometro();
+String valorGuinho(int variable, const String &texto);
 
 // Temperatura ambiente, Humedad, Velocidad, Trip, Odometro, temperatura bateria, Carga batería
-float humedad = 80;        // humedad_ambiente
-float temperatura = 21.2;  // temperatura_ambiente
-int velocidad = 12;        // OK
-int trip = 0;              // OK
-int odometro = 432;        // OK
-float temp_bat = 25.4;     // temperatura_ok
-int carga = 80;            // porcentaje_carga
+float humedad = 80;       // humedad_ambiente
+float temperatura = 21.2; // temperatura_ambiente
+int velocidad = 12;       // OK
+int trip = 0;             // OK
+int odometro = 432;       // OK
+float temp_bat = 25.4;    // temperatura_ok
+int carga = 80;           // porcentaje_carga
 volatile int pulsosTotales = 0;
 
 // El guiño es el valor que me anuncia que luces deben prender
+const String textoApagado = "apagado";
+const String textoDerecha = "derecha";
+const String textoIzquierda = "izquierda";
+const String textoBaliza = "baliza";
+
 String guinho = "";
-String guinhoActual = "";
+String guinhoActual = textoApagado;
 String guinhoAnterior = "";
-String textoDerecha = "derecha";
-String textoIzquierda = "izquierda";
-String textoBaliza = "baliza";
 int gDerecho = 0;
 int gIzquierdo = 0;
 int derecho = 0;
@@ -54,12 +59,12 @@ int baliza = 0;
 
 bool reloj = false;
 
-const int chipSelect = PINSD;  // SD
-String dataString = ".";    // DATO
+const int chipSelect = PINSD; // SD
+String dataString = ".";      // DATO
 String inputString = "";
 String lecturas = "";
 bool datoRecibidoCompleto = false;
-bool datoEnviadoCompleto = false;
+bool datoESP8266Completo = false;
 
 // Promedio dato
 int n_muestras = 20;
@@ -82,16 +87,18 @@ float vel = 0;
 
 int cicloJS = 0;
 
-
-
-void inicializar() {
+void inicializar()
+{
   ////////////RTC////////////
   Wire.begin();
   RTC.begin();
-  if (!RTC.isrunning()) {
+  if (!RTC.isrunning())
+  {
     Serial.println("RTC is NOT running!");
     reloj = false;
-  } else {
+  }
+  else
+  {
     Serial.println("RTC running");
     reloj = true;
   }
@@ -100,19 +107,21 @@ void inicializar() {
 
   ////////////SD////////////
   Serial.print("Inicializando tarjeta SD...");
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(chipSelect))
+  {
     Serial.println("Fallo la tarjeta, o no esta presente");
     // while (1)
     //  continue;
-  } else
+  }
+  else
     Serial.println("Tarjeta inicializada.");
 
   /////////   CONTADOR   ////////
   attachInterrupt(digitalPinToInterrupt(PINCONTADOR), contadorPulsos, RISING);
 
-  pinMode(PINGDERECHO, INPUT);
-  pinMode(PINGIZQUIERDO, INPUT);
-  pinMode(PINBALIZA, INPUT);
+  pinMode(PINGDERECHO, INPUT_PULLUP);
+  pinMode(PINGIZQUIERDO, INPUT_PULLUP);
+  pinMode(PINBALIZA, INPUT_PULLUP);
   pinMode(PINLDERECHO, OUTPUT);
   pinMode(PINLIZQUIERDO, OUTPUT);
   pinMode(PINCARGABAT, INPUT);

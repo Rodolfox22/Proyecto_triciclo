@@ -13,7 +13,6 @@ RTC_DS1307 RTC;
 #include "datos_bateria.hpp"
 
 StaticJsonDocument<300> estadoPant;
-// Adafruit_ADS1115 ads;
 
 void setup()
 {
@@ -55,6 +54,7 @@ void datosRecibidos(String datos)
   DeserializationError error = deserializeJson(estadoPant, datos);
   if (error)
   {
+    Serial.println("Los datos recibidos por el puerto serie son incompatibles con Json");
     return;
   }
 
@@ -77,18 +77,29 @@ void serialEvent()
   {
     datosJS = Serial1.readString();
     datosRecibidos(datosJS);
-    Serial1.flush();
-    Serial.println("Datos recibidos");
+    Serial.println("Datos recibidos por Serial1");
     Serial.println(datosJS);
+
+    // Borra cualquier resto de datos recibidos
+    while (Serial1.available())
+    {
+      Serial1.read();
+    }
+    datoESP8266Completo = true;
     datoRecibidoCompleto = true;
   }
+
   if (Serial.available())
   {
-    datosJS = Serial1.readString();
-    datosRecibidos(datosJS);
-    Serial1.flush();
-    Serial.println("Datos recibidos");
-    Serial.println(datosJS);
+    guinho = Serial.readStringUntil('\n');
+    Serial.print("Datos recibidos por Serial, guinho:");
+    Serial.println(guinho);
+
+    // Borra cualquier resto de datos recibidos
+    while (Serial.available())
+    {
+      Serial.read();
+    }
     datoRecibidoCompleto = true;
   }
 }
@@ -96,7 +107,7 @@ void serialEvent()
 // Convierte en una palabra los datos recibidos
 void enviarDatos()
 {
-  if (datoRecibidoCompleto)
+  if (datoESP8266Completo)
   {
     String valores;
     StaticJsonDocument<300> sensoresJson;
@@ -111,10 +122,11 @@ void enviarDatos()
     sensoresJson["guinho"] = guinhoActual;
 
     serializeJson(sensoresJson, valores);
+    Serial.println("Json");
     Serial.println(valores);
     // Se envían los datos al ESP8266
     Serial1.println(valores);
-    datoRecibidoCompleto = false;
+    datoESP8266Completo = false;
   }
 }
 
@@ -133,7 +145,6 @@ void loguearDatos()
     datosOdo += ",#trip#";
     datosOdo += trip;
     datosOdo += ",";
-    Serial.println(datosOdo);
     guardarOdometro(datosOdo);
   }
 }
@@ -168,7 +179,7 @@ String prepararDatosSD()
 // Imprime los datos en la tarjeta
 void imprimirEnSD(String &logActual)
 {
-  Serial.println("//////////////Dato completo//////////////");
+  Serial.println("//////////////Dato completo datalog//////////////");
   File dataFile = SD.open("datalog.txt", FILE_WRITE);
   if (dataFile)
   {
@@ -201,7 +212,7 @@ void guardarOdometro(String &logActual)
   contador = 0;
 }
 
-int buscarDatoEnArchivo(const String &variableBuscada)
+int buscarEnSD(const String &variableBuscada)
 {
   File archivo = SD.open("odo.txt");
   String buscar = "#" + variableBuscada + "#";
@@ -224,7 +235,7 @@ int buscarDatoEnArchivo(const String &variableBuscada)
           // Extraer el dato entre la palabra clave y la coma
           dato = linea.substring(inicio + buscar.length(), fin);
 
-          Serial.println("Dato encontrado: " + dato);
+          //Serial.println("Dato encontrado: " + dato);
           valor = dato.toInt();
         }
       }
@@ -261,81 +272,129 @@ int calcularVelocidad(int diametro, int pulsos_por_vuelta)
 // Calcula la velocidad y la distancia recorrida
 void calcularDistancia()
 {
-  if (millis() - anteriorDistancia >= TIEMPOSUMA)
+  if (millis() - anteriorDistancia >= TIEMPODISTANCIA)
   {
     float temp = int(float(pulsosTotales) * float(rueda) * PI / 1000.0);
     velocidad = calcularVelocidad(rueda, contador);
     odometro = int(temp);
+    // verOdometro();
     anteriorDistancia = millis();
   }
 }
 
 void leerBotones()
 {
+  // Los botones son de logica inversa, por lo que al presionar se envía un '0' lógico
+  // Variables para detectar flanco descendente
+  static int anteriorPinD = HIGH;
+  static int anteriorPinI = HIGH;
+  static int anteriorPinB = HIGH;
+
   if (millis() - anteriorGuinho >= TIEMPOGUINHO)
   {
-    if (digitalRead(PINGDERECHO))
+    int pinDerecho = digitalRead(PINGDERECHO);
+    int pinIzquierdo = digitalRead(PINGIZQUIERDO);
+    int pinBaliza = digitalRead(PINBALIZA);
+
+    if (!pinDerecho && anteriorPinD)
     {
+      Serial.println("Boton derecho");
       gDerecho = !gDerecho;
       gIzquierdo = 0;
       baliza = 0;
-      anteriorGuinho = millis();
+      guinhoActual = valorGuinho(gDerecho, textoDerecha);
+      anteriorPinD = pinDerecho;
       return;
     }
+    anteriorPinD = pinDerecho;
 
-    if (digitalRead(PINGIZQUIERDO))
+    if (!pinIzquierdo && anteriorPinI)
     {
+      Serial.println("Boton izquierdo");
       gIzquierdo = !gIzquierdo;
       gDerecho = 0;
       baliza = 0;
+      guinhoActual = valorGuinho(gIzquierdo, textoIzquierda);
+      anteriorPinI = pinIzquierdo;
       anteriorGuinho = millis();
       return;
     }
+    anteriorPinI = pinIzquierdo;
 
-    if (digitalRead(PINBALIZA))
+    if (!pinBaliza && anteriorPinB)
     {
+      Serial.println("Boton baliza");
       baliza = !baliza;
       gIzquierdo = 0;
       gDerecho = 0;
+      guinhoActual = valorGuinho(baliza, textoBaliza);
+      anteriorPinB = pinBaliza;
       anteriorGuinho = millis();
       return;
     }
+    anteriorPinB = pinBaliza;
 
-    // Lógica para manejar comandos por puerto serie
-    if (guinho == textoDerecha)
+    escucharPuerto();
+
+    if (guinhoActual == textoApagado)
     {
+      baliza = 0;
+      gIzquierdo = 0;
+      gDerecho = 0;
+      anteriorGuinho = millis();
+    }
+  }
+}
+
+// Lógica para manejar comandos por puerto serie
+void escucharPuerto()
+{
+  if (datoRecibidoCompleto)
+  {
+    datoRecibidoCompleto = false;
+    Serial.println("Datos del puerto");
+
+    if (guinho.equals(textoDerecha))
+    {
+      Serial.println("Luz derecha");
       gDerecho = 1;
       gIzquierdo = 0;
       baliza = 0;
+      guinhoActual = textoDerecha;
       anteriorGuinho = millis();
       return;
     }
 
-    if (guinho == textoIzquierda)
+    if (guinho.equals(textoIzquierda))
     {
+      Serial.println("Luz izquierda");
       gIzquierdo = 1;
       gDerecho = 0;
       baliza = 0;
+      guinhoActual = textoIzquierda;
       anteriorGuinho = millis();
       return;
     }
 
-    if (guinho == textoBaliza)
+    if (guinho.equals(textoBaliza))
     {
+      Serial.println("Baliza encendida");
       baliza = 1;
       gIzquierdo = 0;
       gDerecho = 0;
+      guinhoActual = textoBaliza;
       anteriorGuinho = millis();
       return;
     }
 
-    if (guinhoActual != textoDerecha || guinhoActual != textoIzquierda || guinhoActual != textoBaliza)
+    if (guinho == textoApagado)
     {
-
       baliza = 0;
       gIzquierdo = 0;
       gDerecho = 0;
+      guinhoActual = textoApagado;
       anteriorGuinho = millis();
+      return;
     }
   }
 }
@@ -349,7 +408,6 @@ void setearLuces()
 
     if (gDerecho)
     {
-      guinhoActual = textoDerecha;
       derecho = !derecho;
       izquierdo = 0;
       return;
@@ -357,7 +415,6 @@ void setearLuces()
 
     if (gIzquierdo)
     {
-      guinhoActual = textoIzquierda;
       izquierdo = !izquierdo;
       derecho = 0;
       return;
@@ -365,14 +422,13 @@ void setearLuces()
 
     if (baliza)
     {
-      guinhoActual = textoBaliza;
       derecho = !derecho;
       izquierdo = derecho;
       return;
     }
 
     // Si no hay pulsadores activados ni comando en guinho
-    guinhoActual = "";
+    // guinhoActual = "";
     derecho = 0;
     izquierdo = 0;
     baliza = 0;
@@ -388,8 +444,8 @@ void encender()
 // Recupera datos útiles para odometro y trip
 void recuperarDatos()
 {
-  pulsosTotales = buscarDatoEnArchivo("odometro");
-  trip = buscarDatoEnArchivo("trip");
+  pulsosTotales = buscarEnSD("odometro");
+  trip = buscarEnSD("trip");
   Serial.print("Pulsos: ");
   Serial.print(pulsosTotales);
   Serial.print("\tTrip: ");
@@ -404,6 +460,32 @@ void actualizarSensores()
   temp_bat = temperatura_ok;
   carga = porcentaje_carga;
 }
+
+void verOdometro()
+{
+  Serial.print("Pulsos: ");
+  Serial.print(pulsosTotales);
+  Serial.print("\tOdometro: ");
+  Serial.println(odometro);
+  Serial.print("\tDerecho: ");
+  Serial.print(gDerecho);
+  Serial.print("\tBaliza: ");
+  Serial.print(baliza);
+  Serial.print("\tIzquierdo: ");
+  Serial.print(gIzquierdo);
+  Serial.print("\tGuinho: ");
+  Serial.println(guinhoActual);
+}
+
+String valorGuinho(int variable, const String &texto)
+{
+  if (variable)
+  {
+    return texto;
+  }
+  return textoApagado;
+}
+
 // Temperatura ambiente   lectura[0]
 // Humedad                lectura[1]
 // Calcular Velocidad     lectura[2]

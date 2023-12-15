@@ -6,7 +6,8 @@
 // Odometro               lectura[4] "odometro"     "/ODO"
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
-
+#define MYPORT_TX D5
+#define MYPORT_RX D6
 
 /*
 const char *ssid = "UNRaf_Libre";

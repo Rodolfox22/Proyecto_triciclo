@@ -7,12 +7,16 @@
 
 AsyncWebServer server(80);
 //D5 Tx --- D6 Rx
-SoftwareSerial ComSerial(D5, D6);
+SoftwareSerial ComSerial(MYPORT_RX, MYPORT_TX,false);
+
 
 void setup()
 {
   Serial.begin(9600);
   ComSerial.begin(9600);
+  if (!ComSerial) { // If the object did not initialize, then its configuration is invalid
+    Serial.println("Invalid EspSoftwareSerial pin configuration, check config"); 
+    }
   tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
@@ -56,9 +60,10 @@ void servidor()
      // Leer el cuerpo de la solicitud
     datosJson = request->getParam("plain")->value();
     ComSerial.println(datosJson);
+    Serial.print("Datos enviados: ");
     Serial.println(datosJson);
     // Enviar respuesta al cliente
-    request->send(200, "text/plain", "Datos recibidos correctamente"); });
+    request->send(201, "text/plain", "Datos recibidos correctamente"); });
 
   server.begin();
 }
@@ -104,7 +109,10 @@ String processor(const String &var)
       datos_recibidos++;
       String datos = ComSerial.readString();
       Serial.println(datos);
-      ComSerial.flush();
+      while(ComSerial.available())
+      {
+        ComSerial.read();
+      }
 
       return datos;
     }

@@ -1,6 +1,7 @@
 //todo: revisar si voy a necesitar envios y timer_destello
 let envios = 0,
   trip = 0,
+  odometro = 0,
   timer_destello = 0;
 let lectura = [
   ["humedad", "80"],
@@ -12,14 +13,16 @@ let lectura = [
   ["carga", "80"],
 ];
 
-let cuentaGuinho = 0;
-const GUINHO = ["", "derecha", "izquierda", "baliza"];
+const TEXTOAPAGADO = "apagado";
 const TEXTODERECHA = "derecha";
 const TEXTOIZQUIERDA = "izquierda";
 const TEXTOBALIZA = "baliza";
+const GUINHO = [TEXTOAPAGADO, TEXTODERECHA, TEXTOIZQUIERDA, TEXTOBALIZA];
+let cuentaGuinho = 0;
 let giroDer, giroIz;
 let envioJS = {};
 let objetoWakeLock = null;
+let comunicacionOk = false;
 
 window.onload = inicio;
 
@@ -41,10 +44,10 @@ function inicio() {
 
 setInterval(function () {
   solicitud("/ACTUALIZAR");
-  datosOdometro();
+  pruevaVisualizacion();
   actualizar();
   enviar();
-}, 1000);
+}, 10000);
 
 function solicitud(url) {
   var xhttp = new XMLHttpRequest();
@@ -52,7 +55,9 @@ function solicitud(url) {
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       const respuesta = this.responseText;
-      procesarDatos(respuesta);
+      //procesarDatos(respuesta);
+      console.log(respuesta);
+      comunicacionOk = true;
     } /*else {
       // Hubo un error en la solicitud
       console.error("Error en la solicitud:", this.status);
@@ -63,40 +68,49 @@ function solicitud(url) {
 }
 
 function enviar() {
-  setTimeout(() => {
-    var xhr = new XMLHttpRequest();
+  if (comunicacionOk) {
+    setTimeout(() => {
+      var xhr = new XMLHttpRequest();
 
-    xhr.open("POST", "/ENVIAR", true);
-    //xhr.setRequestHeader("Content-Type", "application/json");
-    // Convertir el objeto JavaScript a una cadena JSON
-    const jsonData = JSON.stringify(envioJS);
+      xhr.open("POST", "/ENVIAR", true);
+      xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+      // Convertir el objeto JavaScript a una cadena JSON
+      const jsonData = JSON.stringify(envioJS);
 
-    // Configurar el controlador de eventos para la carga
-    xhr.onload = function () {
-      if (this.status == 200) {
-        // La solicitud se completó correctamente
-        console.log(this.responseText);
-      } /*else {
+      // Configurar el controlador de eventos para la carga
+      xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 201) {
+          // La solicitud se completó correctamente
+
+          console.log("Texto: "+ this.responseText);
+          console.log(this.response);
+        } else {
         // Hubo un error en la solicitud
         console.error("Error en la solicitud:", this.status);
-      }*/
-    };
+      }
+      };
 
-    // Enviar la solicitud con los datos JSON
-    xhr.send(jsonData);
-  }, 200);
+      // Enviar la solicitud con los datos JSON
+      xhr.send(jsonData);
+    }, 200);
+    comunicacionOk=false;
+  }
 }
 
-function datosOdometro() {
-  envios++;
-  //Todo: borrar estas lineas una vez esté listo el programa
-  const calculoTrip = envios - trip;
-  lectura[buscarLectura("odometro")][1] = envios;
-  lectura[buscarLectura("trip")][1] = calculoTrip;
-  envioJS.trip = trip;
-  envioJS.cicloJS = envios;
+function pruevaVisualizacion() {
+  if (!comunicacionOk) {
+    envios++;
+    odometro = envios;
+    //Todo: borrar estas lineas una vez esté listo el programa
+    const calculoTrip = envios - trip;
+    lectura[buscarLectura("trip")][1] = calculoTrip;
+    envioJS.trip = trip;
+    lectura[buscarLectura("odometro")][1] = envios;
+    envioJS.cicloJS = envios;
+  }
 }
 
+//Leo todos los datos del arreglo para insertarlos en la pagina  por medio de un metodo innerHTML
 function actualizar() {
   //console.log("Actualizando...");
   for (const datos in lectura) {
@@ -109,6 +123,7 @@ function actualizar() {
 
 function procesarDatos(texto) {
   //TODO: Aca recibo el texto serial, y tengo que desdoblarlo para realizar todos los innerHTML
+  console.log("Leyendo datos del puerto serie");
   const datos = JSON.parse(texto);
   lectura[buscarLectura("humedad")][1] = datos.humedad;
   lectura[buscarLectura("temperatura")][1] = datos.temperatura;
@@ -119,21 +134,29 @@ function procesarDatos(texto) {
   lectura[buscarLectura("carga")][1] = datos.carga;
   cuentaGuinho = GUINHO.indexOf(datos.guinho);
 
+  for (let index = 0; index < lectura.length; index++) {
+    const parametro = lectura[index][0];
+    const valor = lectura[index][1];
+    console.log(parametro + ": " + valor);
+  }
+
   console.log(texto);
 }
 
 /* Funcionalidad dinamica*/
 
 function reinicioTrip() {
-  trip = envios;
-  const calculoTrip = envios - trip;
+  trip = odometro;
+  lectura[buscarLectura("trip")][1] = trip;
+  const calculoTrip = odometro - trip;
   console.log("Reinicio trip");
   document.getElementById("trip").innerHTML = calculoTrip;
 }
 
+//Logica para determinar si se encienden los guinhos
 function guinhos(orden) {
   if (cuentaGuinho == GUINHO.indexOf(orden)) {
-    orden = "";
+    orden = TEXTOAPAGADO;
   }
   cuentaGuinho = GUINHO.indexOf(orden);
   envioJS.guinho = orden;
@@ -145,27 +168,28 @@ setInterval(function () {
   timer_destello++;
 }, 300);
 
+//Indico cuando deben encenderse las flechas
 function giros() {
-  let guinho = "";
+  let figuraGuinho = TEXTOAPAGADO;
   if (timer_destello % 2 == 0) {
-    guinho = GUINHO[cuentaGuinho];
+    figuraGuinho = GUINHO[cuentaGuinho];
   } else {
-    guinho = "";
+    figuraGuinho = TEXTOAPAGADO;
   }
 
-  if (guinho == TEXTODERECHA) {
+  if (figuraGuinho == TEXTODERECHA) {
     giroDer.classList.add("arrow-on");
     giroIz.classList.remove("arrow-on");
     return;
   }
 
-  if (guinho == TEXTOIZQUIERDA) {
+  if (figuraGuinho == TEXTOIZQUIERDA) {
     giroIz.classList.add("arrow-on");
     giroDer.classList.remove("arrow-on");
     return;
   }
 
-  if (guinho == TEXTOBALIZA) {
+  if (figuraGuinho == TEXTOBALIZA) {
     giroDer.classList.add("arrow-on");
     giroIz.classList.add("arrow-on");
     return;
