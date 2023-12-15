@@ -6,8 +6,8 @@
 // Odometro               lectura[4] "odometro"     "/ODO"
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
-#define MYPORT_TX D5
-#define MYPORT_RX D6
+#define MYPORT_TX D8
+#define MYPORT_RX D7
 
 /*
 const char *ssid = "UNRaf_Libre";
@@ -35,7 +35,6 @@ int trip = 0;
 int odometro = 250;
 float temp_bat = 32.5;
 int carga = 85;
-
 String datosJson;
 
 void servidor();

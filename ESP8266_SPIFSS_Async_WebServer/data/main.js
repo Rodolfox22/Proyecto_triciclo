@@ -54,14 +54,16 @@ function solicitud(url) {
 
   xhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      const respuesta = this.responseText;
-      //procesarDatos(respuesta);
-      console.log(respuesta);
-      comunicacionOk = true;
-    } /*else {
-      // Hubo un error en la solicitud
+      try {
+        const respuesta = this.responseText;
+        procesarDatos(respuesta);
+        comunicacionOk = true;
+      } catch (error) {
+        console.error("Error al analizar JSON:", error);
+      }
+    } else {
       console.error("Error en la solicitud:", this.status);
-    }*/
+    }
   };
   xhttp.open("GET", url, true);
   xhttp.send();

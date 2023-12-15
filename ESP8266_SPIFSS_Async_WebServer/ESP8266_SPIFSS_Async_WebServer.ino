@@ -6,27 +6,27 @@
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
-//D5 Tx --- D6 Rx
-SoftwareSerial ComSerial(MYPORT_RX, MYPORT_TX,false);
-
+// D5 Tx --- D6 Rx
+//SoftwareSerial Serial(MYPORT_RX, MYPORT_TX, false);
 
 void setup()
 {
+  //Serial.begin(9600);
   Serial.begin(9600);
-  ComSerial.begin(9600);
-  if (!ComSerial) { // If the object did not initialize, then its configuration is invalid
-    Serial.println("Invalid EspSoftwareSerial pin configuration, check config"); 
-    }
+  /*if (!Serial)
+  { // If the object did not initialize, then its configuration is invalid
+    //Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
+  }*/
   tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
   {
-    Serial.println("An Error has occurred while mounting SPIFFS");
+    //Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
 
   modoAP();
-  //modoSTA();
+  // modoSTA();
 
   servidor();
 }
@@ -43,7 +43,7 @@ void servidor()
   //  Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/estilos.css", "text/css"); });
-  
+
   //  Route to load icon file
   server.on("/Unraf.svg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/Unraf.svg", "image/svg+xml"); });
@@ -53,15 +53,31 @@ void servidor()
             { request->send(SPIFFS, "/main.js", "text/js"); });
 
   server.on("/ACTUALIZAR", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+            { 
+    //Serial.println("Leyendo puerto serie");
+    String datoSerie="";
+  if (Serial.available()) 
+  {
+    datos_recibidos++;
+    datoSerie = Serial.readString();
+    //Serial.println(datoSerie);
+    while (Serial.available()) {
+      Serial.read();
+      //Serial.print(".");
+    }
+    request->send(200, "application/json", datoSerie); // Devolver datos como JSON
+  } else {
+    //Serial.println("No esposible recibir datos desde el puerto Serial");
+    request->send(500, "text/plain", "Error al procesar la solicitud");
+  } });
 
   server.on("/ENVIAR", HTTP_POST, [](AsyncWebServerRequest *request)
             {
      // Leer el cuerpo de la solicitud
     datosJson = request->getParam("plain")->value();
-    ComSerial.println(datosJson);
-    Serial.print("Datos enviados: ");
     Serial.println(datosJson);
+    //Serial.print("Datos enviados: ");
+    //Serial.println(datosJson);
     // Enviar respuesta al cliente
     request->send(201, "text/plain", "Datos recibidos correctamente"); });
 
@@ -71,17 +87,17 @@ void servidor()
 void modoAP()
 {
   delay(1000);
-  Serial.println("Connecting to WiFi..");
+  //Serial.println("Connecting to WiFi..");
 
   // Modo Acces point
 
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid_AP, password_AP);
 
-  Serial.print("Servidor: ");
-  Serial.println(WiFi.softAPIP());
-  Serial.print("Local: ");
-  Serial.println(WiFi.localIP());
+  //Serial.print("Servidor: ");
+  //Serial.println(WiFi.softAPIP());
+  //Serial.print("Local: ");
+  //Serial.println(WiFi.localIP());
   delay(1000);
 }
 
@@ -94,24 +110,24 @@ void modoSTA()
   {
 
     delay(1000);
-    Serial.println("Connecting to WiFi..");
+    //Serial.println("Connecting to WiFi..");
 
-    Serial.println(WiFi.localIP());
+    //Serial.println(WiFi.localIP());
   }
 }
 
 String processor(const String &var)
 {
-    if (var == "ACTUALIZAR")
+  if (var == "ACTUALIZAR")
   {
-    if (ComSerial.available())
+    if (Serial.available())
     {
       datos_recibidos++;
-      String datos = ComSerial.readString();
-      Serial.println(datos);
-      while(ComSerial.available())
+      String datos = Serial.readString();
+      //Serial.println(datos);
+      while (Serial.available())
       {
-        ComSerial.read();
+        Serial.read();
       }
 
       return datos;

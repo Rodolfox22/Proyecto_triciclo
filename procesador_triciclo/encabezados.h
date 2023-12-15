@@ -1,7 +1,7 @@
 #define DeltaTImprime 120000 // muestreo de datos en SD [ms]
-#define TIEMPODISTANCIA 1000 //refresco de datos de velocidad y distancia
-#define TIEMPOGUINHO 50      //refresco de datos de lectura de botones
-#define TIEMPODESTELLO 600   //tiempo de destello de guiños
+#define TIEMPODISTANCIA 1000 // refresco de datos de velocidad y distancia
+#define TIEMPOGUINHO 50      // refresco de datos de lectura de botones
+#define TIEMPODESTELLO 600   // tiempo de destello de guiños
 #define PINGDERECHO 2
 #define PINGIZQUIERDO 4
 #define PINBALIZA 5
@@ -58,6 +58,7 @@ int izquierdo = 0;
 int baliza = 0;
 
 bool reloj = false;
+bool datoInicial = true;
 
 const int chipSelect = PINSD; // SD
 String dataString = ".";      // DATO
@@ -81,6 +82,7 @@ unsigned long anteriorSuma = 0;
 unsigned long anteriorDestello = 0;
 unsigned long anteriorGuinho = 0;
 unsigned long anteriorDistancia = 0;
+unsigned long anteriorEnvio = 0;
 // muestreo
 unsigned long anterior = 0;
 float vel = 0;

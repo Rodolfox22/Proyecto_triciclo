@@ -107,7 +107,18 @@ void serialEvent()
 // Convierte en una palabra los datos recibidos
 void enviarDatos()
 {
-  if (datoESP8266Completo)
+  //Mientras no recibe datos, envía cada cierto tiempo una pregunta al puerto hasta obtener repuesta
+  if (datoInicial)
+  {
+    if (millis() - anteriorEnvio <= TIEMPODISTANCIA)
+    {
+      return;
+    }
+    Serial.println("Envio inicial");
+    anteriorEnvio = millis();
+  }
+
+  if (datoESP8266Completo || datoInicial)
   {
     String valores;
     StaticJsonDocument<300> sensoresJson;
@@ -235,7 +246,7 @@ int buscarEnSD(const String &variableBuscada)
           // Extraer el dato entre la palabra clave y la coma
           dato = linea.substring(inicio + buscar.length(), fin);
 
-          //Serial.println("Dato encontrado: " + dato);
+          // Serial.println("Dato encontrado: " + dato);
           valor = dato.toInt();
         }
       }
