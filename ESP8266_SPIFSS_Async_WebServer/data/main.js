@@ -27,7 +27,7 @@ let comunicacionOk = false;
 window.onload = inicio;
 
 function inicio() {
-  pantallaEncendida();
+  //pantallaEncendida();
   giroDer = document.getElementById("flecha-der");
   giroIz = document.getElementById("flecha-izq");
   document.getElementById("reinicio").onclick = reinicioTrip;
@@ -57,8 +57,11 @@ function solicitud(url) {
       try {
         const respuesta = this.responseText;
         procesarDatos(respuesta);
+        console.log(respuesta);
         comunicacionOk = true;
       } catch (error) {
+        const respuestaError = this.responseText;
+        console.log(respuestaError);
         console.error("Error al analizar JSON:", error);
       }
     } else {
@@ -84,18 +87,18 @@ function enviar() {
         if (this.readyState == 4 && this.status == 201) {
           // La solicitud se completó correctamente
 
-          console.log("Texto: "+ this.responseText);
+          console.log("Texto: " + this.responseText);
           console.log(this.response);
         } else {
-        // Hubo un error en la solicitud
-        console.error("Error en la solicitud:", this.status);
-      }
+          // Hubo un error en la solicitud
+          console.error("Error en la solicitud:", this.status);
+        }
       };
 
       // Enviar la solicitud con los datos JSON
       xhr.send(jsonData);
     }, 200);
-    comunicacionOk=false;
+    comunicacionOk = false;
   }
 }
 
@@ -214,6 +217,7 @@ function buscarLectura(valor) {
   return indice;
 }
 
+/*
 // Verificar si la API está disponible en el navegador
 async function pantallaEncendida() {
   if ("wakeLock" in navigator) {
@@ -233,7 +237,7 @@ async function pantallaEncendida() {
       "No se encuentra disponible el servicio para mantener la pantalla encendida."
     );
   }
-}
+}*/
 //                        Variable     Id HTML       Etiqueta
 // Temperatura ambiente   lectura[0] "temperatura"  "/TEMPERATURA"
 // Humedad                lectura[1] "humedad"      "/HUMEDAD"

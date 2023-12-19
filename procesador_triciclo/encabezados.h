@@ -12,6 +12,9 @@
 #define PINCARGABAT A0
 #define PINCONTADOR 3
 #define PINSD 53
+// Diametro de la rueda en dm
+#define RUEDA 400
+#define MUESTRAS 20
 
 void contadorPulsos();
 void serialEvent();
@@ -21,7 +24,7 @@ void loguearDatos();
 void imprimirEnSD(String &dato);
 void guardarOdometro(String &logActual);
 int buscarEnSD(String &variableBuscada);
-int calcularVelocidad(int rueda, int pulsosPorVuelta);
+int calcularVelocidad(int pulsosPorVuelta);
 void calcularDistancia();
 String prepararDatosSD();
 void leerBotones();
@@ -40,7 +43,10 @@ int trip = 0;             // OK
 int odometro = 432;       // OK
 float temp_bat = 25.4;    // temperatura_ok
 int carga = 80;           // porcentaje_carga
-volatile int pulsosTotales = 0;
+float distanciaTotal=0;
+
+// Desarrollo en metros
+float desarrollo_m = float(RUEDA) * PI / float(1000.0);
 
 // El guiño es el valor que me anuncia que luces deben prender
 const String textoApagado = "apagado";
@@ -71,11 +77,12 @@ bool datoESP8266Completo = false;
 int n_muestras = 20;
 
 // contador pulsos
-long contador = 0;
-// Diametro de la rueda en mm
-int rueda = 4;
+volatile unsigned long contador = 0;
+volatile unsigned long anterior = 0;
+
 // muestreo
 unsigned long UltimoTiempoImprime = 0;
+
 // muestreo
 unsigned long ContadorImprime = 0;
 unsigned long anteriorSuma = 0;
@@ -83,15 +90,13 @@ unsigned long anteriorDestello = 0;
 unsigned long anteriorGuinho = 0;
 unsigned long anteriorDistancia = 0;
 unsigned long anteriorEnvio = 0;
-// muestreo
-unsigned long anterior = 0;
 float vel = 0;
 
 int cicloJS = 0;
 
 void inicializar()
 {
-  ////////////RTC////////////
+   ////////////RTC////////////
   Wire.begin();
   RTC.begin();
   if (!RTC.isrunning())
@@ -105,15 +110,18 @@ void inicializar()
     reloj = true;
   }
 
-  // RTC.adjust(DateTime(__DATE__, __TIME__)); //Cargarlo una vez para setearlo y despues sacar frase para que cuando se reinicio no vuelva a la fecha vieja
+  /* RTC.adjust(DateTime(__DATE__, __TIME__)); //Cargarlo una vez para setearlo y despues sacar frase para que cuando se reinicio no vuelva a la fecha vieja
+  Serial.println("Reloj seteado correctamente, vuelva a cargar en sketch comentando estas lineas")
+  while (true)
+    continue;
+  */
+  
 
   ////////////SD////////////
   Serial.print("Inicializando tarjeta SD...");
   if (!SD.begin(chipSelect))
   {
     Serial.println("Fallo la tarjeta, o no esta presente");
-    // while (1)
-    //  continue;
   }
   else
     Serial.println("Tarjeta inicializada.");

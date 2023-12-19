@@ -6,16 +6,23 @@
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
-// D5 Tx --- D6 Rx
-//SoftwareSerial Serial(MYPORT_RX, MYPORT_TX, false);
+SoftwareSerial ComSerial(MYPORT_RX, MYPORT_TX, false);
 
-void setup()
+int variable_RX = 0;
+int variable_TX = 0;
+//const char *matriz[2] = {"OFF", "ON"};
+
+    void
+    setup()
 {
-  //Serial.begin(9600);
   Serial.begin(9600);
-  /*if (!Serial)
+  pinMode(MYPORT_RX, INPUT);
+  pinMode(MYPORT_TX, OUTPUT);
+
+  // ComSerial.begin(9600);
+  /*if (!ComSerial)
   { // If the object did not initialize, then its configuration is invalid
-    //Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
+    Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
   }*/
   tiempo_anterior = millis();
 
@@ -53,21 +60,31 @@ void servidor()
             { request->send(SPIFFS, "/main.js", "text/js"); });
 
   server.on("/ACTUALIZAR", HTTP_GET, [](AsyncWebServerRequest *request)
-            { 
+            {
     //Serial.println("Leyendo puerto serie");
-    String datoSerie="";
-  if (Serial.available()) 
+    String datoSerie = "";
+    /*if (true)
   {
-    datos_recibidos++;
-    datoSerie = Serial.readString();
-    //Serial.println(datoSerie);
-    while (Serial.available()) {
-      Serial.read();
+    datoSerie = "Dato recibido: ";
+    datoSerie += matriz[variable_RX];
+    datoSerie += "\tDato enviado: ";
+    datoSerie += matriz[variable_TX];
+    variable_TX = !variable_TX;
+    Serial.println(datoSerie);
+*/
+    if (ComSerial.available()) 
+  {
+      //datos_recibidos++;
+      datoSerie = ComSerial.readString();
+      //Serial.println(datoSerie);
+    while (ComSerial.available()) {
+      ComSerial.read();
       //Serial.print(".");
     }
-    request->send(200, "application/json", datoSerie); // Devolver datos como JSON
+    //datoSerie="{\"humedad\":76.2,\"temperatura\":22.5,\"velocidad\":7,\"trip\":0,\"odometro\":0,\"temp_bat\":22.25,\"carga\":0,\"guinho\":\"derecha\"}";
+    request->send(200, "text/plain", datoSerie); // Devolver datos
   } else {
-    //Serial.println("No esposible recibir datos desde el puerto Serial");
+    Serial.println("No es posible recibir datos desde el puerto Serial");
     request->send(500, "text/plain", "Error al procesar la solicitud");
   } });
 
@@ -75,7 +92,7 @@ void servidor()
             {
      // Leer el cuerpo de la solicitud
     datosJson = request->getParam("plain")->value();
-    Serial.println(datosJson);
+    //ComSerial.println(datosJson);
     //Serial.print("Datos enviados: ");
     //Serial.println(datosJson);
     // Enviar respuesta al cliente
@@ -87,17 +104,17 @@ void servidor()
 void modoAP()
 {
   delay(1000);
-  //Serial.println("Connecting to WiFi..");
+  Serial.println("Connecting to WiFi..");
 
   // Modo Acces point
 
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid_AP, password_AP);
 
-  //Serial.print("Servidor: ");
-  //Serial.println(WiFi.softAPIP());
-  //Serial.print("Local: ");
-  //Serial.println(WiFi.localIP());
+  Serial.print("Servidor: ");
+  Serial.println(WiFi.softAPIP());
+  Serial.print("Local: ");
+  Serial.println(WiFi.localIP());
   delay(1000);
 }
 
@@ -110,9 +127,9 @@ void modoSTA()
   {
 
     delay(1000);
-    //Serial.println("Connecting to WiFi..");
+    Serial.println("Connecting to WiFi..");
 
-    //Serial.println(WiFi.localIP());
+    Serial.println(WiFi.localIP());
   }
 }
 
@@ -120,18 +137,18 @@ String processor(const String &var)
 {
   if (var == "ACTUALIZAR")
   {
-    if (Serial.available())
+   /* if (//ComSerial.available())
     {
       datos_recibidos++;
-      String datos = Serial.readString();
-      //Serial.println(datos);
-      while (Serial.available())
+      String datos = // ComSerial.readString();
+          Serial.println(datos);
+      while (//ComSerial.available())
       {
-        Serial.read();
+        // ComSerial.read();
       }
 
       return datos;
-    }
+    }*/
   }
 
   return "error";

@@ -17,7 +17,7 @@ StaticJsonDocument<300> estadoPant;
 void setup()
 {
   ////////////SERIAL////////////
-  Serial.setTimeout(10);
+  // Serial.setTimeout(10);
   Serial.begin(9600);
   Serial1.begin(9600);
 
@@ -42,9 +42,7 @@ void loop()
 // Cada vez que tengo una interrupcion llamo a esta funcion y me devuelve la cantidad de microsegundo que hay entre pulso y pulso
 void contadorPulsos()
 {
-  contador = micros() - anterior;
-  anterior = micros();
-  pulsosTotales++;
+  contador++;
 }
 
 void datosRecibidos(String datos)
@@ -61,13 +59,13 @@ void datosRecibidos(String datos)
   guinho = String(estadoPant["guinho"].as<const char *>());
   trip = estadoPant["trip"].as<int>();
   cicloJS = estadoPant["cicloJS"].as<int>();
-
-  Serial.print("Guinho: ");
-  Serial.print(guinho);
-  Serial.print("\tTrip: ");
-  Serial.print(trip);
-  Serial.print("\tCiclo: ");
-  Serial.println(cicloJS);
+  /*
+    Serial.print("Guinho: ");
+    Serial.print(guinho);
+    Serial.print("\tTrip: ");
+    Serial.print(trip);
+    Serial.print("\tCiclo: ");
+    Serial.println(cicloJS);*/
 }
 
 void serialEvent()
@@ -107,14 +105,13 @@ void serialEvent()
 // Convierte en una palabra los datos recibidos
 void enviarDatos()
 {
-  //Mientras no recibe datos, envía cada cierto tiempo una pregunta al puerto hasta obtener repuesta
+  // Mientras no recibe datos, envía cada cierto tiempo una pregunta al puerto hasta obtener repuesta
   if (datoInicial)
   {
     if (millis() - anteriorEnvio <= TIEMPODISTANCIA)
     {
       return;
     }
-    Serial.println("Envio inicial");
     anteriorEnvio = millis();
   }
 
@@ -135,7 +132,7 @@ void enviarDatos()
     serializeJson(sensoresJson, valores);
     Serial.println("Json");
     Serial.println(valores);
-    // Se envían los datos al ESP8266
+    //  Se envían los datos al ESP8266
     Serial1.println(valores);
     datoESP8266Completo = false;
   }
@@ -152,7 +149,7 @@ void loguearDatos()
     imprimirEnSD(guardarLog);
 
     String datosOdo = "#odometro#";
-    datosOdo += pulsosTotales;
+    datosOdo += distanciaTotal;
     datosOdo += ",#trip#";
     datosOdo += trip;
     datosOdo += ",";
@@ -163,19 +160,24 @@ void loguearDatos()
 // Prepara los datos para guardar en la tarjeta
 String prepararDatosSD()
 {
+  dataString += "";
   String logActual = "";
-  DateTime now = RTC.now();
-  dataString = String(now.day(), DEC);
-  dataString += "/";
-  dataString += String(now.month(), DEC);
-  dataString += "/";
-  dataString += String(now.year(), DEC);
-  dataString += ",";
-  dataString += String(now.hour(), DEC);
-  dataString += ":";
-  dataString += String(now.minute(), DEC);
-  dataString += ":";
-  dataString += String(now.second(), DEC);
+  if (reloj)
+  {
+    DateTime now = RTC.now();
+    dataString = String(now.day(), DEC);
+    dataString += "/";
+    dataString += String(now.month(), DEC);
+    dataString += "/";
+    dataString += String(now.year(), DEC);
+    dataString += ",";
+    dataString += String(now.hour(), DEC);
+    dataString += ":";
+    dataString += String(now.minute(), DEC);
+    dataString += ":";
+    dataString += String(now.second(), DEC);
+  }
+
   dataString += ",#velocidad#";
   dataString += String(velocidad);
   dataString += ",#temp_bat#";
@@ -184,19 +186,21 @@ String prepararDatosSD()
   dataString += carga;
   dataString += ",#temperatura#";
   dataString += temperatura;
+  dataString += ",#humedad#";
+  dataString += humedad;
   return dataString;
 }
 
 // Imprime los datos en la tarjeta
 void imprimirEnSD(String &logActual)
 {
-  Serial.println("//////////////Dato completo datalog//////////////");
+  // Serial.println("//////////////Dato completo datalog//////////////");
   File dataFile = SD.open("datalog.txt", FILE_WRITE);
   if (dataFile)
   {
     dataFile.println(logActual);
     dataFile.close();
-    Serial.println(logActual);
+    // Serial.println(logActual);
   }
   else
   {
@@ -206,13 +210,13 @@ void imprimirEnSD(String &logActual)
 
 void guardarOdometro(String &logActual)
 {
-  Serial.println("Guardando en archivo odo.txt");
+  // Serial.println("Guardando en archivo odo.txt");
   File dataFile = SD.open("odo.txt", FILE_WRITE | O_TRUNC);
   if (dataFile)
   {
     dataFile.println(logActual);
     dataFile.close();
-    Serial.println(logActual);
+    // Serial.println(logActual);
   }
   else
   {
@@ -220,7 +224,6 @@ void guardarOdometro(String &logActual)
   }
 
   UltimoTiempoImprime = millis();
-  contador = 0;
 }
 
 int buscarEnSD(const String &variableBuscada)
@@ -260,37 +263,32 @@ int buscarEnSD(const String &variableBuscada)
   return valor;
 }
 
-// Calcular Velocidad
-int calcularVelocidad(int diametro, int pulsos_por_vuelta)
-{
-  float velocidad_km_h = 0;
-  if (pulsos_por_vuelta > 0)
-  {
-    // circunferencia de la rueda en metros
-    // todo averiguar porque divide por 100
-    float circunferencia = PI * float(diametro) / 100.0;
-
-    // tiempo entre pulsos en segundos
-    float tiempo_entre_pulsos_seg = float(pulsos_por_vuelta) / 1000000.0;
-    // velocidad en m/s
-    float velocidad_m_s = circunferencia / tiempo_entre_pulsos_seg;
-    // velocidad en km/h
-    velocidad_km_h = velocidad_m_s * 3.6;
-  }
-  return int(velocidad_km_h);
-}
-
 // Calcula la velocidad y la distancia recorrida
 void calcularDistancia()
 {
   if (millis() - anteriorDistancia >= TIEMPODISTANCIA)
   {
-    float temp = int(float(pulsosTotales) * float(rueda) * PI / 1000.0);
-    velocidad = calcularVelocidad(rueda, contador);
-    odometro = int(temp);
-    // verOdometro();
+    Serial.print(contador);
+    velocidad = calcularVelocidad();
+    distanciaTotal += float(contador) * desarrollo_m / 1000.0;
+    odometro = int(distanciaTotal);
     anteriorDistancia = millis();
+    Serial.print("\tVelocidad: ");
+    Serial.print(velocidad);
+    Serial.print("\tOdometro: ");
+    Serial.println(odometro);
   }
+}
+
+// Calcular Velocidad
+int calcularVelocidad()
+{
+  // velocidad en m/s
+  float velocidad_m_s = desarrollo_m * (float(contador) / float(TIEMPODISTANCIA));
+  // velocidad en km/h
+  float velocidad_km_h = velocidad_m_s * 360.0;
+  contador = 0;
+  return int(velocidad_km_h);
 }
 
 void leerBotones()
@@ -313,6 +311,7 @@ void leerBotones()
       gDerecho = !gDerecho;
       gIzquierdo = 0;
       baliza = 0;
+      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(gDerecho, textoDerecha);
       anteriorPinD = pinDerecho;
       return;
@@ -325,6 +324,7 @@ void leerBotones()
       gIzquierdo = !gIzquierdo;
       gDerecho = 0;
       baliza = 0;
+      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(gIzquierdo, textoIzquierda);
       anteriorPinI = pinIzquierdo;
       anteriorGuinho = millis();
@@ -338,6 +338,7 @@ void leerBotones()
       baliza = !baliza;
       gIzquierdo = 0;
       gDerecho = 0;
+      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(baliza, textoBaliza);
       anteriorPinB = pinBaliza;
       anteriorGuinho = millis();
@@ -455,10 +456,10 @@ void encender()
 // Recupera datos útiles para odometro y trip
 void recuperarDatos()
 {
-  pulsosTotales = buscarEnSD("odometro");
+  distanciaTotal = buscarEnSD("odometro");
   trip = buscarEnSD("trip");
   Serial.print("Pulsos: ");
-  Serial.print(pulsosTotales);
+  Serial.print(distanciaTotal);
   Serial.print("\tTrip: ");
   Serial.println(trip);
 }
@@ -475,7 +476,7 @@ void actualizarSensores()
 void verOdometro()
 {
   Serial.print("Pulsos: ");
-  Serial.print(pulsosTotales);
+  Serial.print(distanciaTotal);
   Serial.print("\tOdometro: ");
   Serial.println(odometro);
   Serial.print("\tDerecho: ");
@@ -488,6 +489,7 @@ void verOdometro()
   Serial.println(guinhoActual);
 }
 
+//Enciende o apaga la orden de guiños correspondiente a cada boton
 String valorGuinho(int variable, const String &texto)
 {
   if (variable)
