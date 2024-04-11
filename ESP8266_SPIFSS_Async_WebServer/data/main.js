@@ -47,7 +47,7 @@ setInterval(function () {
   pruevaVisualizacion();
   actualizar();
   enviar();
-}, 10000);
+}, 5000);
 
 function solicitud(url) {
   var xhttp = new XMLHttpRequest();

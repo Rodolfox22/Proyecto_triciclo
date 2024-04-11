@@ -15,5 +15,6 @@
   },
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"
-  }
+  },
+  "svg.preview.background": "editor"
 }

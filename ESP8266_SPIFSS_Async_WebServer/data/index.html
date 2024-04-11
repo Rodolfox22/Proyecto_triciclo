@@ -4,16 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Triciclo</title>
-    <link rel="icon" href="Unraf.svg" type="image/svg+xml">
+    <link rel="icon" href="Unraf.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="estilos.css" />
     <script src="main.js"></script>
   </head>
   <body>
-    <div class="pantalla">
-      <div class="pantalla-clima">
+    <div id="pantalla">
+      <div id="pantalla-clima">
         <p class="clima">
           <span id="temperatura">0</span>
           <sup class="units">&deg; C</sup>
+        </p>
+        <p class="clima alarmas">
+          <img class="alarma" src="alarma-off.svg" alt="Alarma" />
+          <img id="alarma-on" class="alarma" src="alarma.svg" alt="Alarma" />
         </p>
         <p class="clima">
           <span id="humedad">0</span>
@@ -21,11 +25,11 @@
         </p>
       </div>
 
-      <div class="pantalla-principal">
+      <div id="pantalla-principal">
         <div class="flecha-izq">
           <div id="flecha-izq" class="arrow-5 arrow-6 arrow-on"></div>
         </div>
-        <div class="velo">
+        <div id="velo">
           <p class="subtitulo veloc">
             <span id="velocidad">0</span>
             <sup class="units">km/h</sup>
@@ -36,7 +40,7 @@
         </div>
       </div>
 
-      <div class="pantalla-secundario">
+      <div id="pantalla-secundario">
         <div class="datos bateria">
           <p class="subtitulo">Bateria</p>
           <div>
@@ -48,7 +52,7 @@
           <div>
             <p class="dato-secundario">
               <span id="temp_bat">0</span>
-              <sup class="units">&deg; C</sup>
+              <sup class="units">&deg;C</sup>
             </p>
           </div>
         </div>

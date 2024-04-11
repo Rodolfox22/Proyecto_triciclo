@@ -9,38 +9,62 @@ html {
   background-color: var(--fondo);
 }
 
-body {
-  max-width: 100%; /* Limita el ancho del contenedor al ancho de la pantalla */
-  margin: 0 auto; /* Centra el contenedor en la pantalla */
-  max-height: 100%;
+html *{
+  user-select: none;
 }
 
-.pantalla {
-  display: flex;
-  flex-wrap: wrap;
+body {
+  width: 98vw; /* Limita el ancho del contenedor al ancho de la pantalla */
+  margin: 0 auto; /* Centra el contenedor en la pantalla */
+  height: 98vh;
+}
+
+.alarmas {
+  position: relative;
+}
+
+.alarma {
+  width: max(8vw, 30px);
+  position: absolute;
+  top: 5vw;
+  transform: translate(-50%, -50%);
+}
+
+#alarma-on {
+  display: none;
+}
+
+#pantalla {
+  display: grid;
+  grid-template:
+    "clima" 8vh
+    "principal" 50vh
+    "secundario" 30vh;
   width: 90%;
   height: 90%;
+}
+
+#pantalla * {
   justify-content: space-between;
 }
 
-.pantalla-clima {
-  color: white;
-  margin: 0 0 0 50px;
-  width: 100%;
+#pantalla-clima {
+  grid-area: clima;
   display: flex;
-  height: 1fr;
+  color: white;
+  margin: 30px 10px -10vh 5%;
   align-self: center;
-  justify-content: space-between;
-  font-size: 5vh;
+  font-size: 5vw;
 }
 
-.pantalla-principal {
-  margin: 0 0 0 50px;
-  width: 100%;
+#pantalla-principal {
+  grid-area: principal;
+  margin-top: 6vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 
 .flecha-izq,
 .flecha-der {
@@ -50,15 +74,15 @@ body {
   align-self: center;
 }
 
-.velo {
-  height: 30vh;
+#velo {
+  display: flex;
+  width: 40%;
   text-align: center;
+  
 }
 
-.velo * {
-  align-items: center;
-  justify-content: center;
-  font-size: 20vh;
+#velocidad {
+  font-size: min(200px, 20vw);
 }
 
 .veloc {
@@ -66,13 +90,12 @@ body {
   line-height: 8vh;
 }
 
-.pantalla-secundario {
-  margin: 0 auto;
-  width: 95%;
-  display: grid;
+#pantalla-secundario {
+  grid-area: secundario;
+  display: flex;
   min-height: 30vh;
   align-items: center;
-  position: relative;
+  justify-content: space-around;
 }
 
 .subtitulo {
@@ -81,8 +104,7 @@ body {
   font-weight: bold;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
-  font-size: 3vh;
-  height: 6vh;
+  font-size: max(4vw,4vh);
 }
 
 .button {
@@ -92,7 +114,7 @@ body {
   font-family: fantasy;
   transition-duration: 0.4s;
   border-radius: 10px;
-  font-size: 1em;
+  font-size: max(3vh, 2vw);
   padding: 0.1em 0.4em;
 }
 
@@ -102,12 +124,12 @@ body {
 }
 
 .datos {
-  justify-content: center;
-  align-items: center;
   margin: 0.2em;
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .datos * {
@@ -115,39 +137,22 @@ body {
 }
 
 .dato-secundario {
-  font-size: 2.9vh;
+  font-size: max(3vh, 2.5vw);
 }
 
-.pantalla-secundario > div {
+#pantalla-secundario > div {
   color: white;
   list-style: none;
   text-align: center;
   text-decoration: none;
 }
 
-.odometro {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-}
-.bateria {
-  position: absolute;
-  left: 40px;
-  top: 30px;
-}
-
-.datos-trip {
-  position: absolute;
-  top: 80%;
-  right: 50%;
-  left: 50%;
-}
-
 .units {
-  font-size: 3vh;
+  font-size: max(3vw,3vh);
 }
 
-/* -- FLechas      -- */
+
+/* -----   Flechas   ----- */
 
 .arrow-5 {
   /* more triangle */
@@ -172,7 +177,6 @@ body {
 }
 
 /* -- ARROW 5      -- */
-
 .arrow-6 {
   /* more triangle */
   transform: rotate(-135deg);
@@ -184,45 +188,4 @@ body {
 
 .arrow-on:before {
   background-color: var(--flecha-on);
-}
-
-@media (min-width: 600px) {
-  .pantalla-principal {
-    height: 45vh;
-  }
-
-  .pantalla-secundario {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    height: max-content;
-  }
-
-  .datos {
-    align-items: center;
-    margin: 0.2em 0.2em;
-  }
-
-  .datos-trip {
-    margin: none;
-    position: unset;
-  }
-
-  .odometro {
-    position: unset;
-  }
-  .bateria {
-    position: unset;
-  }
-
-  .velo * {
-    line-height: 30vh;
-  }
-
-  .subtitulo {
-    font-size: 5vh;
-  }
-
-  .dato-secundario {
-    font-size: 5vh;
-  }
 }
