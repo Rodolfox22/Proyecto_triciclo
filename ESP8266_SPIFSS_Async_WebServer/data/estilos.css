@@ -9,7 +9,7 @@ html {
   background-color: var(--fondo);
 }
 
-html *{
+html * {
   user-select: none;
 }
 
@@ -25,7 +25,7 @@ body {
 }
 
 .alarma {
-  width: max(8vw, 30px);
+  width: 8vh;
   position: absolute;
   top: 5vw;
   transform: translate(-50%, -50%);
@@ -38,9 +38,10 @@ body {
 #pantalla {
   display: grid;
   grid-template:
-    "clima" 8vh
-    "principal" 50vh
-    "secundario" 30vh;
+    "clima" 20vh
+    "principal" 35vh
+    "ninguno" 8vh
+    "secundario" 16vh;
   width: 95%;
   height: 95%;
 }
@@ -53,7 +54,7 @@ body {
   grid-area: clima;
   display: flex;
   color: white;
-  margin: 30px 10px -10vh 5%;
+  margin: 30px 10px -5vh 5%;
   align-self: center;
   font-size: 5vw;
 }
@@ -65,7 +66,6 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-
 
 .flecha-izq,
 .flecha-der {
@@ -79,24 +79,22 @@ body {
   display: flex;
   width: 100%;
   text-align: center;
-  
 }
 
 .veloc {
   margin: auto;
-  /*line-height: 8vh;*/
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.unit-velo{
+.unit-velo {
   height: auto;
   flex: 20%;
-}  
+}
 
 #velocidad {
-  font-size: max(min(4em,20vh),15vw);
+  font-size: 30vw;
   flex: 80%;
 }
 
@@ -114,8 +112,7 @@ body {
   font-weight: bold;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
-  font-size: max(4vw,3vh);
-  font-size: max(min(2em,3vh),4vw);
+  font-size: 5.5vw;
 }
 
 .button {
@@ -135,7 +132,7 @@ body {
 }
 
 .datos {
-  margin: 0.2em;
+  margin: 2em 0 0 0;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -148,21 +145,29 @@ body {
 }
 
 .dato-secundario {
-  font-size: max(3vh, 2.5vw);
+  font-size: 3vh;
   flex: 1;
 }
 
 #pantalla-secundario > div {
+  background-color: rgb(25, 26, 26);
+  border-radius: 15px;
+  /*border: 5px solid rgb(49, 49, 49);
+  box-shadow: 0 0 10px 0 rgb(94, 91, 91);*/
+  height: 80%;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
   color: white;
   list-style: none;
   text-align: center;
   text-decoration: none;
+  justify-content: space-between;
 }
 
 .units {
-  font-size: max(3vw,3vh);
+  font-size: max(3vw, 3vh);
 }
-
 
 /* -----   Flechas   ----- */
 
@@ -200,4 +205,36 @@ body {
 
 .arrow-on:before {
   background-color: var(--flecha-on);
+}
+
+@media (orientation: landscape) {
+  #pantalla {
+    grid-template:
+      "clima" 10vh
+      "principal" 45vh
+      "ninguno" 5vh
+      "secundario" 26vh;
+  }
+  #velocidad {
+    font-size: 18vh;
+  }
+
+  .subtitulo {
+    font-size: 5.5vh;
+    /*margin: 10px 10px;*/
+  }
+
+  .alarma {
+    width: max(8vw, 30px);
+  }
+
+  .dato-secundario {
+    font-size: 2.5vw;
+  }
+
+  #pantalla-secundario > div {
+    box-shadow: 0 0 10px 0 rgba(236, 229, 229, 0.5);
+    height: 100%;
+    width: 26%;
+  }
 }
