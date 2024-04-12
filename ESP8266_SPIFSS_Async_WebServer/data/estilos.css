@@ -17,6 +17,7 @@ body {
   width: 98vw; /* Limita el ancho del contenedor al ancho de la pantalla */
   margin: 0 auto; /* Centra el contenedor en la pantalla */
   height: 98vh;
+  min-height: ;
 }
 
 .alarmas {
@@ -40,8 +41,8 @@ body {
     "clima" 8vh
     "principal" 50vh
     "secundario" 30vh;
-  width: 90%;
-  height: 90%;
+  width: 95%;
+  height: 95%;
 }
 
 #pantalla * {
@@ -76,18 +77,27 @@ body {
 
 #velo {
   display: flex;
-  width: 40%;
+  width: 100%;
   text-align: center;
   
 }
 
-#velocidad {
-  font-size: min(200px, 20vw);
-}
-
 .veloc {
   margin: auto;
-  line-height: 8vh;
+  /*line-height: 8vh;*/
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.unit-velo{
+  height: auto;
+  flex: 20%;
+}  
+
+#velocidad {
+  font-size: max(min(4em,20vh),15vw);
+  flex: 80%;
 }
 
 #pantalla-secundario {
@@ -100,11 +110,12 @@ body {
 
 .subtitulo {
   text-align: center;
-  font-family: Arial Black;
+  font-family: Gobold Black;
   font-weight: bold;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
-  font-size: max(4vw,4vh);
+  font-size: max(4vw,3vh);
+  font-size: max(min(2em,3vh),4vw);
 }
 
 .button {
@@ -138,6 +149,7 @@ body {
 
 .dato-secundario {
   font-size: max(3vh, 2.5vw);
+  flex: 1;
 }
 
 #pantalla-secundario > div {

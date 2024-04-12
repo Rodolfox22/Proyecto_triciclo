@@ -40,6 +40,14 @@ function inicio() {
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
   };
+  document.getElementById("alarma-on").onclick = function () {
+    guinhos(TEXTOBALIZA);
+    document.getElementById("alarma-on").style.display = null;
+  };
+  document.getElementById("alarma-off").onclick = function () {
+    guinhos(TEXTOBALIZA);
+    document.getElementById("alarma-on").style.display = "block";
+  };
 }
 
 setInterval(function () {
