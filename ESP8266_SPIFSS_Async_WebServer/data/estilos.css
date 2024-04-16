@@ -13,6 +13,15 @@ html * {
   user-select: none;
 }
 
+@font-face {
+  font-family: "Gobold Lowplus";
+  src: url("/Gobold Lowplus.otf") format("truetype");
+}
+
+body {
+  font-family: "Gobold Lowplus", sans-serif;
+}
+
 body {
   width: 98vw; /* Limita el ancho del contenedor al ancho de la pantalla */
   margin: 0 auto; /* Centra el contenedor en la pantalla */
@@ -25,7 +34,7 @@ body {
 }
 
 .alarma {
-  width: 8vh;
+  width: 20vw;
   position: absolute;
   top: 5vw;
   transform: translate(-50%, -50%);
@@ -108,11 +117,11 @@ body {
 
 .subtitulo {
   text-align: center;
-  font-family: Gobold Black;
+  /*font-family: Gobold Black;*/
   font-weight: bold;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
-  font-size: 5.5vw;
+  font-size: 6.5vw;
 }
 
 .button {
@@ -122,18 +131,19 @@ body {
   font-family: fantasy;
   transition-duration: 0.4s;
   border-radius: 10px;
-  font-size: 2.5vh;
+  font-size: 5.5vw;
   padding: 0.1em 0.4em;
 }
 
 .button:hover {
   background-color: rgb(28, 29, 28);
   color: white;
+  box-shadow: 0 0 10px rgba(236, 229, 229, 0.5);
 }
 
 .datos {
   margin: 2em 0 0 0;
-  height: 100%;
+  height: 110%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -145,7 +155,7 @@ body {
 }
 
 .dato-secundario {
-  font-size: 3vh;
+  font-size: 4vh;
   flex: 1;
 }
 
@@ -166,7 +176,11 @@ body {
 }
 
 .units {
-  font-size: max(3vw, 3vh);
+  font-size: 3.5vw;
+}
+
+.unitsClima {
+  font-size: 3.5vw;
 }
 
 /* -----   Flechas   ----- */
@@ -215,21 +229,33 @@ body {
       "ninguno" 5vh
       "secundario" 26vh;
   }
+
+  #pantalla-clima {
+    font-size: 6vh;
+  }
+
   #velocidad {
     font-size: 18vh;
   }
 
   .subtitulo {
     font-size: 5.5vh;
-    /*margin: 10px 10px;*/
   }
 
   .alarma {
-    width: max(8vw, 30px);
+    width: 15vh;
   }
 
   .dato-secundario {
-    font-size: 2.5vw;
+    font-size: 5vh;
+  }
+
+  .units {
+    font-size: 3.5vh;
+  }
+
+  .unitsClima {
+    font-size: 5.5vh;
   }
 
   #pantalla-secundario > div {
@@ -239,6 +265,6 @@ body {
   }
 
   .button {
-    font-size: 2.3vw;
+    font-size: 6vh;
   }
 }

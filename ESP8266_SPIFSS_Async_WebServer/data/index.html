@@ -11,11 +11,11 @@
   <body>
     <div id="pantalla">
       <div id="pantalla-clima">
-        <p class="clima">
+        <p>
           <span id="temperatura">0</span>
-          <sup class="units">&deg; C</sup>
+          <span class="unitsClima">&deg;C</span>
         </p>
-        <p class="clima alarmas">
+        <p class="alarmas">
           <img
             id="alarma-off"
             class="alarma"
@@ -24,9 +24,9 @@
           />
           <img id="alarma-on" class="alarma" src="alarma.svg" alt="Alarma-on" />
         </p>
-        <p class="clima">
+        <p>
           <span id="humedad">0</span>
-          <sup class="units">%</sup>
+          <span class="unitsClima">%</span>
         </p>
       </div>
 
@@ -37,7 +37,7 @@
         <div id="velo">
           <p class="subtitulo veloc">
             <span id="velocidad">0</span>
-            <sup class="units unit-velo">km/h</sup>
+            <span class="unitsClima unit-velo">km/h</span>
           </p>
         </div>
         <div class="flecha-der arrow-on">
@@ -51,13 +51,13 @@
           <div>
             <p class="dato-secundario">
               <span id="carga">0</span>
-              <sup class="units">%</sup>
+              <span class="units">%</span>
             </p>
           </div>
           <div>
             <p class="dato-secundario">
               <span id="temp_bat">0</span>
-              <sup class="units">&deg;C</sup>
+              <span class="units">&deg;C</span>
             </p>
           </div>
         </div>
@@ -66,24 +66,26 @@
           <div>
             <p class="dato-secundario">
               <span id="trip">0</span>
-              <sup class="units">km</sup>
+              <span class="units">km</span>
             </p>
           </div>
           <div>
             <p class="dato-secundario">
-              <button id="reinicio" class="button">Reiniciar</button>
+              <button id="reinicio" class="button">Reset</button>
             </p>
           </div>
         </div>
         <div class="datos odometro">
-          <div class="subtitulo">Odometro</div>
+          <div class="subtitulo">Odómetro</div>
           <div>
             <p class="dato-secundario">
               <span id="odometro">0</span>
-              <sup class="units">km</sup>
+              <span class="units">km</span>
             </p>
           </div>
-          <div></div>
+          <div>
+            <p class="dato-secundario"><span id="hora-actual"></span></p>
+          </div>
         </div>
       </div>
     </div>

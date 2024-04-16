@@ -19,7 +19,7 @@ const TEXTOIZQUIERDA = "izquierda";
 const TEXTOBALIZA = "baliza";
 const GUINHO = [TEXTOAPAGADO, TEXTODERECHA, TEXTOIZQUIERDA, TEXTOBALIZA];
 let cuentaGuinho = 0;
-let giroDer, giroIz;
+let giroDer, giroIz, alarma;
 let envioJS = {};
 let objetoWakeLock = null;
 let comunicacionOk = false;
@@ -30,6 +30,7 @@ function inicio() {
   //pantallaEncendida();
   giroDer = document.getElementById("flecha-der");
   giroIz = document.getElementById("flecha-izq");
+  alarma = document.getElementById("alarma-on");
   document.getElementById("reinicio").onclick = reinicioTrip;
   giroDer.onclick = function () {
     guinhos(TEXTODERECHA);
@@ -40,13 +41,15 @@ function inicio() {
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
   };
-  document.getElementById("alarma-on").onclick = function () {
+  //Todo: crear baliza implementando una pagina nueva que quede sobre la pantalla indicando las alarmas disponibles, implementar un boton para desactivar alarmas, crear un instructivo para decir que hacer con la alarma
+  // Todo: puedo resaltar el valor que está mostrando falla: puede ser tanto la bateria, que sería un fallo minimo, como la temperatura, este sría un fallo grave, y tendria que tener alarma sonora
+  alarma.onclick = function () {
     guinhos(TEXTOBALIZA);
-    document.getElementById("alarma-on").style.display = null;
+    alarma.style.display = null;
   };
   document.getElementById("alarma-off").onclick = function () {
     guinhos(TEXTOBALIZA);
-    document.getElementById("alarma-on").style.display = "block";
+    alarma.style.display = "block";
   };
 }
 
@@ -55,6 +58,7 @@ setInterval(function () {
   pruevaVisualizacion();
   actualizar();
   enviar();
+  actualizaHora();
 }, 5000);
 
 function solicitud(url) {
@@ -224,6 +228,27 @@ function buscarLectura(valor) {
   }
   return indice;
 }
+
+function actualizaHora() {
+  const fechaHoraActual = new Date();
+
+  const anho = fechaHoraActual.getUTCFullYear();
+  const mes = ("0" + (fechaHoraActual.getUTCMonth() + 1)).slice(-2);
+  const dia = ("0" + fechaHoraActual.getUTCDate()).slice(-2);
+  const horas = ("0" + fechaHoraActual.getHours()).slice(-2);
+  const minutos = ("0" + fechaHoraActual.getMinutes()).slice(-2);
+  const segundos = ("0" + fechaHoraActual.getSeconds()).slice(-2);
+
+  const horaFormateada = `${horas}:${minutos}`;
+  document.getElementById("hora-actual").textContent = horaFormateada;
+
+  //const tagHora = `${anho}-${mes}-${dia}_${horas}:${minutos}`;
+  const tagHora = `${anho}-${mes}-${dia}_${horas}:${minutos}:${segundos}`;
+  //console.log(tagHora);
+
+  return tagHora;
+}
+
 
 /*
 // Verificar si la API está disponible en el navegador
