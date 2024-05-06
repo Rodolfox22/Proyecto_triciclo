@@ -2,7 +2,7 @@
 let envios = 0,
   trip = 0,
   odometro = 0,
-  timer_destello = 0;
+  timer_destello = false;
 let lectura = [
   ["humedad", "80"],
   ["temperatura", "21"],
@@ -18,8 +18,9 @@ const TEXTODERECHA = "derecha";
 const TEXTOIZQUIERDA = "izquierda";
 const TEXTOBALIZA = "baliza";
 const GUINHO = [TEXTOAPAGADO, TEXTODERECHA, TEXTOIZQUIERDA, TEXTOBALIZA];
-let cuentaGuinho = 0;
-let giroDer, giroIz, alarma;
+const verAlarma = { lowBat: false, highTemp: false };
+let numGuinho = 0;
+let giroDer, giroIz, alarma, hTemp, lBat;
 let envioJS = {};
 let objetoWakeLock = null;
 let comunicacionOk = false;
@@ -31,12 +32,18 @@ function inicio() {
   giroDer = document.getElementById("flecha-der");
   giroIz = document.getElementById("flecha-izq");
   alarma = document.getElementById("alarma-on");
+  lBat = document.getElementById("lowbat");
+  hTemp = document.getElementById("hightemp");
   document.getElementById("reinicio").onclick = reinicioTrip;
   giroDer.onclick = function () {
     guinhos(TEXTODERECHA);
+    verAlarma.highTemp = !verAlarma.highTemp;
+    console.log(verAlarma);
   };
   giroIz.onclick = function () {
     guinhos(TEXTOIZQUIERDA);
+    verAlarma.lowBat = !verAlarma.lowBat;
+    console.log(verAlarma);
   };
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
@@ -45,11 +52,10 @@ function inicio() {
   // Todo: puedo resaltar el valor que está mostrando falla: puede ser tanto la bateria, que sería un fallo minimo, como la temperatura, este sría un fallo grave, y tendria que tener alarma sonora
   alarma.onclick = function () {
     guinhos(TEXTOBALIZA);
-    alarma.style.display = null;
   };
+
   document.getElementById("alarma-off").onclick = function () {
     guinhos(TEXTOBALIZA);
-    alarma.style.display = "block";
   };
 }
 
@@ -149,7 +155,7 @@ function procesarDatos(texto) {
   lectura[buscarLectura("odometro")][1] = datos.odometro;
   lectura[buscarLectura("temp_bat")][1] = datos.temp_bat;
   lectura[buscarLectura("carga")][1] = datos.carga;
-  cuentaGuinho = GUINHO.indexOf(datos.guinho);
+  numGuinho = GUINHO.indexOf(datos.guinho);
 
   for (let index = 0; index < lectura.length; index++) {
     const parametro = lectura[index][0];
@@ -170,50 +176,65 @@ function reinicioTrip() {
   document.getElementById("trip").innerHTML = calculoTrip;
 }
 
-//Logica para determinar si se encienden los guinhos
+//Logica para determinar si se encienden los guiños
 function guinhos(orden) {
-  if (cuentaGuinho == GUINHO.indexOf(orden)) {
+  if (numGuinho == GUINHO.indexOf(orden)) {
     orden = TEXTOAPAGADO;
   }
-  cuentaGuinho = GUINHO.indexOf(orden);
+  numGuinho = GUINHO.indexOf(orden);
   envioJS.guinho = orden;
   console.log(envioJS);
 }
 
 setInterval(function () {
   giros();
-  timer_destello++;
+  activarAlarma();
+  timer_destello = !timer_destello;
 }, 300);
 
 //Indico cuando deben encenderse las flechas
 function giros() {
-  let figuraGuinho = TEXTOAPAGADO;
-  if (timer_destello % 2 == 0) {
-    figuraGuinho = GUINHO[cuentaGuinho];
-  } else {
-    figuraGuinho = TEXTOAPAGADO;
-  }
+  const accion = timer_destello ? GUINHO[numGuinho] : TEXTOAPAGADO;
 
-  if (figuraGuinho == TEXTODERECHA) {
-    giroDer.classList.add("arrow-on");
-    giroIz.classList.remove("arrow-on");
-    return;
-  }
-
-  if (figuraGuinho == TEXTOIZQUIERDA) {
-    giroIz.classList.add("arrow-on");
-    giroDer.classList.remove("arrow-on");
-    return;
-  }
-
-  if (figuraGuinho == TEXTOBALIZA) {
-    giroDer.classList.add("arrow-on");
-    giroIz.classList.add("arrow-on");
-    return;
-  }
-
+  // Removemos las clases de ambas flechas
   giroDer.classList.remove("arrow-on");
   giroIz.classList.remove("arrow-on");
+
+  // Agregamos las clases según la accion
+  switch (accion) {
+    case TEXTODERECHA:
+      giroDer.classList.add("arrow-on");
+      break;
+    case TEXTOIZQUIERDA:
+      giroIz.classList.add("arrow-on");
+      break;
+    case TEXTOBALIZA:
+      giroDer.classList.add("arrow-on");
+      giroIz.classList.add("arrow-on");
+      break;
+    default:
+      // En caso de TEXTOAPAGADO u otra accion no reconocida, no se agregan clases
+      break;
+  }
+}
+
+function activarAlarma() {
+  if (!timer_destello) {
+    lBat.style.visibility = "hidden";
+    hTemp.style.visibility = "hidden";
+    alarma.style.display = null;
+    return;
+  }
+
+  if (verAlarma.highTemp) {
+    hTemp.style.visibility = "visible";
+    alarma.style.display = "block";
+  }
+
+  if (verAlarma.lowBat) {
+    lBat.style.visibility = "visible";
+    alarma.style.display = "block";
+  }
 }
 
 /*Extras*/
@@ -245,10 +266,9 @@ function actualizaHora() {
   //const tagHora = `${anho}-${mes}-${dia}_${horas}:${minutos}`;
   const tagHora = `${anho}-${mes}-${dia}_${horas}:${minutos}:${segundos}`;
   //console.log(tagHora);
-
+  envioJS.hora = tagHora;
   return tagHora;
 }
-
 
 /*
 // Verificar si la API está disponible en el navegador

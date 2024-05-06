@@ -26,7 +26,12 @@ body {
   width: 98vw; /* Limita el ancho del contenedor al ancho de la pantalla */
   margin: 0 auto; /* Centra el contenedor en la pantalla */
   height: 98vh;
-  min-height: ;
+  min-height: 98vw;
+}
+
+.logoalarma {
+  width: 10vw;
+  visibility: hidden;
 }
 
 .alarmas {
@@ -117,7 +122,6 @@ body {
 
 .subtitulo {
   text-align: center;
-  /*font-family: Gobold Black;*/
   font-weight: bold;
   color: #fff;
   text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
@@ -142,11 +146,9 @@ body {
 }
 
 .datos {
-  margin: 2em 0 0 0;
-  height: 110%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -155,15 +157,14 @@ body {
 }
 
 .dato-secundario {
-  font-size: 4vh;
-  flex: 1;
+  font-size: 4vw;
+  display: flex;
+  align-items: center;
 }
 
 #pantalla-secundario > div {
   background-color: rgb(25, 26, 26);
   border-radius: 15px;
-  /*border: 5px solid rgb(49, 49, 49);
-  box-shadow: 0 0 10px 0 rgb(94, 91, 91);*/
   height: 80%;
   width: 30%;
   display: flex;
@@ -186,7 +187,6 @@ body {
 /* -----   Flechas   ----- */
 
 .arrow-5 {
-  /* more triangle */
   position: relative;
   height: 0px;
   width: 0px;
@@ -225,13 +225,17 @@ body {
   #pantalla {
     grid-template:
       "clima" 10vh
-      "principal" 45vh
+      "principal" 40vh
       "ninguno" 5vh
       "secundario" 26vh;
   }
 
   #pantalla-clima {
     font-size: 6vh;
+  }
+
+  #pantalla-secundario{
+    height: 150%;
   }
 
   #velocidad {
@@ -244,6 +248,10 @@ body {
 
   .alarma {
     width: 15vh;
+  }
+
+  .logoalarma {
+    width: 12vh;
   }
 
   .dato-secundario {

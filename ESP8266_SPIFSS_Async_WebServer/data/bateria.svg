@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X6 -->
+<?xml-stylesheet href="bateria.css" type="text/css"?>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="100mm" height="50mm" version="1.1"
+  style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+  viewBox="0 0 10000 5000" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <style>
+      @charset "UTF-8";
+
+      .fil0 {
+        fill: #ED3237
+      }
+
+      .fil1 {
+        fill: #747273;
+        fill-rule: nonzero
+      }
+    </style>
+  </defs>
+  <g id="Capa_x0020_1">
+    <metadata id="CorelCorpID_0Corel-Layer" />
+    <g id="_877421088">
+      <g>
+        <path class="fil0"
+          d="M3133 2019l0 1162c0,70 78,148 148,148l991 0c41,0 80,-56 80,-103 0,-31 -574,-1205 -630,-1261 -125,-125 -255,-95 -441,-95 -70,0 -148,78 -148,148z" />
+        <path class="fil1"
+          d="M3071 1140l3782 0c190,0 363,73 489,190 129,120 209,286 209,470l0 1588c0,184 -80,350 -209,470 -126,117 -299,190 -489,190l-3782 0c-190,0 -363,-73 -489,-190 -129,-120 -209,-286 -209,-470l0 -1588c0,-184 80,-350 209,-470 126,-117 299,-190 489,-190zm3782 300l-3782 0c-112,0 -213,42 -285,109 -70,65 -113,153 -113,250l0 1588c0,97 43,186 113,250 72,67 173,109 285,109l3782 0c112,0 213,-42 285,-109 70,-65 113,-153 113,-250l0 -1588c0,-97 -43,-186 -113,-250 -72,-67 -173,-109 -285,-109z" />
+      </g>
+      <path class="fil1"
+        d="M7697 1660l25 0c123,0 234,51 315,132 81,81 131,193 131,316l0 956c0,123 -50,235 -131,316 -81,81 -193,132 -315,132l-25 0 -296 0 -150 0 0 -150 0 -1552 0 -150 150 0 296 0zm25 300l-25 0 -146 0 0 1252 146 0 25 0c40,0 77,-16 103,-43 27,-27 43,-64 43,-105l0 -956c0,-41 -16,-78 -43,-105 -26,-27 -63,-43 -103,-43z" />
+    </g>
+  </g>
+</svg>
