@@ -140,7 +140,7 @@ void loop() //------------------------------------------------------------------
 
     // impresion monitor serie-----------------------------------------------------------------------------
 
-    Serial.print("\t\t--- Bateria ---\nTension: ");
+    /*Serial.print("\t\t--- Bateria ---\nTension: ");
     Serial.print(voltaje_de_bateria);
     Serial.print(" V\t");
 
@@ -158,7 +158,7 @@ void loop() //------------------------------------------------------------------
 
     Serial.print("Temperatura: ");
     Serial.print(temperatura_ambiente);
-    Serial.println(" °C");
+    Serial.println(" °C");*/
 /*
     Serial.print("diferencia_tension_carga_descarga : ");
     Serial.print(diferencia_tension_carga_descarga);

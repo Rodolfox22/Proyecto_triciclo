@@ -1,34 +1,19 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
-#include <SoftwareSerial.h>
 
 #include "instrucciones.h"
 
 AsyncWebServer server(80);
-SoftwareSerial ComSerial(MYPORT_RX, MYPORT_TX, false);
 
-int variable_RX = 0;
-int variable_TX = 0;
-//const char *matriz[2] = {"OFF", "ON"};
-
-    void
-    setup()
+void setup()
 {
   Serial.begin(9600);
-  pinMode(MYPORT_RX, INPUT);
-  pinMode(MYPORT_TX, OUTPUT);
-
-  // ComSerial.begin(9600);
-  /*if (!ComSerial)
-  { // If the object did not initialize, then its configuration is invalid
-    Serial.println("Invalid EspSoftwareSerial pin configuration, check config");
-  }*/
   tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
   {
-    //Serial.println("An Error has occurred while mounting SPIFFS");
+    Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
 
@@ -45,7 +30,7 @@ void loop()
 void servidor()
 { // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(SPIFFS, "/index.html", String(), false, processor); });
+            { request->send(SPIFFS, "/index.html", String()); });
 
   //  Route to load style.css file
   server.on("/estilos.css", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -55,6 +40,12 @@ void servidor()
   server.on("/Unraf.svg", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/Unraf.svg", "image/svg+xml"); });
 
+  server.on("/bateria.svg", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/bateria.svg", "image/svg+xml"); });
+
+  server.on("/temp.svg", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(SPIFFS, "/temp.svg", "image/svg+xml"); });
+
   // Route to load main.js file
   server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/main.js", "text/js"); });
@@ -62,41 +53,29 @@ void servidor()
   server.on("/ACTUALIZAR", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     //Serial.println("Leyendo puerto serie");
-    String datoSerie = "";
-    /*if (true)
+
+  if (Serial.available()) 
   {
-    datoSerie = "Dato recibido: ";
-    datoSerie += matriz[variable_RX];
-    datoSerie += "\tDato enviado: ";
-    datoSerie += matriz[variable_TX];
-    variable_TX = !variable_TX;
-    Serial.println(datoSerie);
-*/
-    if (ComSerial.available()) 
-  {
-      //datos_recibidos++;
-      datoSerie = ComSerial.readString();
-      //Serial.println(datoSerie);
-    while (ComSerial.available()) {
-      ComSerial.read();
-      //Serial.print(".");
+    datoSerie = Serial.readString();
+    while (Serial.available()) {
+      Serial.read();
     }
-    //datoSerie="{\"humedad\":76.2,\"temperatura\":22.5,\"velocidad\":7,\"trip\":0,\"odometro\":0,\"temp_bat\":22.25,\"carga\":0,\"guinho\":\"derecha\"}";
+
+    //Datos simulados para pruevas
+    /*datoSerie="{\"humedad\":76.2,\"temperatura\":22.5,\"velocidad\":7,\"trip\":0,\"odometro\":0,\"temp_bat\":22.25,\"carga\":0,\"guinho\":\"derecha\"}";*/
+
     request->send(200, "text/plain", datoSerie); // Devolver datos
   } else {
-    Serial.println("No es posible recibir datos desde el puerto Serial");
+    //Serial.println("No es posible recibir datos desde el puerto Serial");
+    datoSerie="Error al procesar la solicitud";
     request->send(500, "text/plain", "Error al procesar la solicitud");
   } });
 
-  server.on("/ENVIAR", HTTP_POST, [](AsyncWebServerRequest *request)
-            {
-     // Leer el cuerpo de la solicitud
+  server.on("/ENVIAR", HTTP_POST, [](AsyncWebServerRequest *request) {
     datosJson = request->getParam("plain")->value();
-    //ComSerial.println(datosJson);
-    //Serial.print("Datos enviados: ");
-    //Serial.println(datosJson);
-    // Enviar respuesta al cliente
-    request->send(201, "text/plain", "Datos recibidos correctamente"); });
+    Serial.write(datosJson.c_str(), datosJson.length());
+    request->send(201, "text/plain", "Datos recibidos correctamente");
+  });
 
   server.begin();
 }
@@ -115,6 +94,7 @@ void modoAP()
   Serial.println(WiFi.softAPIP());
   Serial.print("Local: ");
   Serial.println(WiFi.localIP());
+
   delay(1000);
 }
 
@@ -125,31 +105,8 @@ void modoSTA()
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED)
   {
-
     delay(1000);
-    Serial.println("Connecting to WiFi..");
-
-    Serial.println(WiFi.localIP());
+    //Serial.println("Connecting to WiFi..");
+    //Serial.println(WiFi.localIP());
   }
-}
-
-String processor(const String &var)
-{
-  if (var == "ACTUALIZAR")
-  {
-   /* if (//ComSerial.available())
-    {
-      datos_recibidos++;
-      String datos = // ComSerial.readString();
-          Serial.println(datos);
-      while (//ComSerial.available())
-      {
-        // ComSerial.read();
-      }
-
-      return datos;
-    }*/
-  }
-
-  return "error";
 }

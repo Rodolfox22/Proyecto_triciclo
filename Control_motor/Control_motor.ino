@@ -3,7 +3,7 @@
 #define TIEMPO 1000
 
 // motores DC
-AF_DCMotor motor(3);
+AF_DCMotor motor(4);
 
 int potenciometro = 0;
 int velocidad = 0;

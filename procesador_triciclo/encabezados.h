@@ -1,17 +1,23 @@
 #define DeltaTImprime 120000 // muestreo de datos en SD [ms]
 #define TIEMPODISTANCIA 1000 // refresco de datos de velocidad y distancia
 #define TIEMPOGUINHO 50      // refresco de datos de lectura de botones
-#define TIEMPODESTELLO 600   // tiempo de destello de guiños
-#define PINGDERECHO 2
-#define PINGIZQUIERDO 4
-#define PINBALIZA 5
-#define PINLDERECHO 6
-#define PINLIZQUIERDO 7
-#define PINDS18B20 9
-#define PINDHT 11
+#define TIEMPODESTELLO 300   // tiempo de destello de guiños
+//Luces
+#define PINLDERECHO 2
+#define PINLIZQUIERDO 4
+
+//Botones
+#define PINGDERECHO 5
+#define PINBALIZA 6
+#define PINGIZQUIERDO 7
+
+//Sensores
+#define PINDS18B20 A2
+#define PINDHT A1
 #define PINCARGABAT A0
 #define PINCONTADOR 3
 #define PINSD 53
+
 // Diametro de la rueda en dm
 #define RUEDA 400
 #define MUESTRAS 20
@@ -135,4 +141,6 @@ void inicializar()
   pinMode(PINLDERECHO, OUTPUT);
   pinMode(PINLIZQUIERDO, OUTPUT);
   pinMode(PINCARGABAT, INPUT);
+  
+  
 }

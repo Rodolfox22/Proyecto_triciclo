@@ -36,7 +36,8 @@ int trip = 0;
 int odometro = 250;
 float temp_bat = 32.5;
 int carga = 85;
-String datosJson;
+String datosJson = "";
+String datoSerie = "";
 
 void servidor();
 String processor(const String &var);

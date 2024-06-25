@@ -82,11 +82,13 @@ void serialEvent()
     while (Serial1.available())
     {
       Serial1.read();
+      datoInicial = false;
     }
     datoESP8266Completo = true;
     datoRecibidoCompleto = true;
   }
 
+  // Sentencia para provar la recepcion de datos desde puerto serie
   if (Serial.available())
   {
     guinho = Serial.readStringUntil('\n');
@@ -108,15 +110,15 @@ void enviarDatos()
   // Mientras no recibe datos, envía cada cierto tiempo una pregunta al puerto hasta obtener repuesta
   if (datoInicial)
   {
-    if (millis() - anteriorEnvio <= TIEMPODISTANCIA)
+    if (millis() - anteriorEnvio <= 5000)
     {
       return;
     }
     anteriorEnvio = millis();
   }
 
-  if (datoESP8266Completo || datoInicial)
-  {
+  /*if (datoESP8266Completo || datoInicial)
+  {*/
     String valores;
     StaticJsonDocument<300> sensoresJson;
 
@@ -135,7 +137,7 @@ void enviarDatos()
     //  Se envían los datos al ESP8266
     Serial1.println(valores);
     datoESP8266Completo = false;
-  }
+  //}
 }
 
 // Guarda estadísticas y datos importantes en la tarjeta SD
@@ -299,6 +301,7 @@ void leerBotones()
   static int anteriorPinI = HIGH;
   static int anteriorPinB = HIGH;
 
+  // Espero que pace un tiempo entre una lectura y otra para detectar solo flanco descendente
   if (millis() - anteriorGuinho >= TIEMPOGUINHO)
   {
     int pinDerecho = digitalRead(PINGDERECHO);
@@ -311,7 +314,7 @@ void leerBotones()
       gDerecho = !gDerecho;
       gIzquierdo = 0;
       baliza = 0;
-      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
+      // Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(gDerecho, textoDerecha);
       anteriorPinD = pinDerecho;
       return;
@@ -324,7 +327,7 @@ void leerBotones()
       gIzquierdo = !gIzquierdo;
       gDerecho = 0;
       baliza = 0;
-      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
+      // Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(gIzquierdo, textoIzquierda);
       anteriorPinI = pinIzquierdo;
       anteriorGuinho = millis();
@@ -338,7 +341,7 @@ void leerBotones()
       baliza = !baliza;
       gIzquierdo = 0;
       gDerecho = 0;
-      //Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
+      // Asigna al valor guinhoActual, el valor de texto correspondiente a la orden
       guinhoActual = valorGuinho(baliza, textoBaliza);
       anteriorPinB = pinBaliza;
       anteriorGuinho = millis();
@@ -489,7 +492,7 @@ void verOdometro()
   Serial.println(guinhoActual);
 }
 
-//Enciende o apaga la orden de guiños correspondiente a cada boton
+// Enciende o apaga la orden de guiños correspondiente a cada boton
 String valorGuinho(int variable, const String &texto)
 {
   if (variable)

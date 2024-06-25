@@ -9,9 +9,10 @@ let lectura = [
   ["velocidad", "12"],
   ["trip", "155"],
   ["odometro", "432"],
-  ["temp_bat", "25"],
+  ["temp_bat", "50"],
   ["carga", "80"],
 ];
+let datos = {};
 
 const TEXTOAPAGADO = "apagado";
 const TEXTODERECHA = "derecha";
@@ -37,25 +38,33 @@ function inicio() {
   document.getElementById("reinicio").onclick = reinicioTrip;
   giroDer.onclick = function () {
     guinhos(TEXTODERECHA);
-    verAlarma.highTemp = !verAlarma.highTemp;
+    //verAlarma.highTemp = !verAlarma.highTemp;
     console.log(verAlarma);
   };
   giroIz.onclick = function () {
     guinhos(TEXTOIZQUIERDA);
-    verAlarma.lowBat = !verAlarma.lowBat;
+    //verAlarma.lowBat = !verAlarma.lowBat;
     console.log(verAlarma);
   };
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
   };
   //Todo: crear baliza implementando una pagina nueva que quede sobre la pantalla indicando las alarmas disponibles, implementar un boton para desactivar alarmas, crear un instructivo para decir que hacer con la alarma
-  // Todo: puedo resaltar el valor que está mostrando falla: puede ser tanto la bateria, que sería un fallo minimo, como la temperatura, este sría un fallo grave, y tendria que tener alarma sonora
+
   alarma.onclick = function () {
     guinhos(TEXTOBALIZA);
   };
 
   document.getElementById("alarma-off").onclick = function () {
     guinhos(TEXTOBALIZA);
+  };
+  document.getElementById("carga").onclick = function () {
+    verAlarma.highTemp = !verAlarma.highTemp;
+    console.log("Alarma temperatura");
+  };
+  document.getElementById("temp_bat").onclick = function () {
+    verAlarma.lowBat = !verAlarma.lowBat;
+    console.log("Alarma bateria");
   };
 }
 
@@ -88,6 +97,7 @@ function solicitud(url) {
   };
   xhttp.open("GET", url, true);
   xhttp.send();
+  console.log(xhttp);
 }
 
 function enviar() {
@@ -147,7 +157,8 @@ function actualizar() {
 function procesarDatos(texto) {
   //TODO: Aca recibo el texto serial, y tengo que desdoblarlo para realizar todos los innerHTML
   console.log("Leyendo datos del puerto serie");
-  const datos = JSON.parse(texto);
+  datos = {};
+  datos = JSON.parse(texto);
   lectura[buscarLectura("humedad")][1] = datos.humedad;
   lectura[buscarLectura("temperatura")][1] = datos.temperatura;
   lectura[buscarLectura("velocidad")][1] = datos.velocidad;
@@ -163,7 +174,7 @@ function procesarDatos(texto) {
     console.log(parametro + ": " + valor);
   }
 
-  console.log(texto);
+  console.log(datos);
 }
 
 /* Funcionalidad dinamica*/
@@ -219,21 +230,35 @@ function giros() {
 }
 
 function activarAlarma() {
+  const alarma_temp = parseFloat(lectura[buscarLectura("temp_bat")][1]);
+  const alarma_bat = parseFloat(lectura[buscarLectura("carga")][1]);
+  if (alarma_temp >= 45) {
+    verAlarma.highTemp = true;
+  } else {
+    verAlarma.highTemp = false;
+  }
+
+  if (alarma_bat <= 20) {
+    verAlarma.lowBat = true;
+  } else {
+    verAlarma.lowBat = false;
+  }
+
   if (!timer_destello) {
     lBat.style.visibility = "hidden";
     hTemp.style.visibility = "hidden";
-    alarma.style.display = null;
+    //alarma.style.display = null;
     return;
   }
 
   if (verAlarma.highTemp) {
     hTemp.style.visibility = "visible";
-    alarma.style.display = "block";
+    //alarma.style.display = "block";
   }
 
   if (verAlarma.lowBat) {
     lBat.style.visibility = "visible";
-    alarma.style.display = "block";
+    //alarma.style.display = "block";
   }
 }
 
