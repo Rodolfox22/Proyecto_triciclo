@@ -47,7 +47,7 @@ void contadorPulsos()
   contador++;
 }
 
-void datosRecibidos(String datos)
+void datosRecibidos(String &datos)
 {
   // String json = "{\"text\":\"myText\",\"id\":10,\"status\":true,\"value\":3.14}";
 
@@ -86,7 +86,6 @@ void leerServidor()
       Serial1.read();
     }
     datoESP8266Completo = true;
-    datoRecibidoCompleto = true;
   }
 
   // Sentencia para provar la recepcion de datos desde puerto serie
@@ -101,7 +100,6 @@ void leerServidor()
     {
       Serial.read();
     }
-    datoRecibidoCompleto = true;
   }
 }
 
@@ -268,15 +266,15 @@ void calcularDistancia()
 {
   if (millis() - anteriorDistancia >= TIEMPODISTANCIA)
   {
-    Serial.print(contador);
+    //Serial.print(contador);
     velocidad = calcularVelocidad();
     distanciaTotal += float(contador) * desarrollo_m / 1000.0;
     odometro = int(distanciaTotal);
     anteriorDistancia = millis();
-    Serial.print("\tVelocidad: ");
+    /*Serial.print("\tVelocidad: ");
     Serial.print(velocidad);
     Serial.print("\tOdometro: ");
-    Serial.println(odometro);
+    Serial.println(odometro);*/
   }
 }
 
@@ -306,6 +304,7 @@ void leerBotones()
     int pinIzquierdo = digitalRead(PINGIZQUIERDO);
     int pinBaliza = digitalRead(PINBALIZA);
 
+    // Detecto si hay una pulsacion
     if (!pinDerecho && anteriorPinD)
     {
       Serial.println("Boton derecho");
@@ -319,6 +318,7 @@ void leerBotones()
     }
     anteriorPinD = pinDerecho;
 
+    // Detecto si hay una pulsacion
     if (!pinIzquierdo && anteriorPinI)
     {
       Serial.println("Boton izquierdo");
@@ -333,6 +333,7 @@ void leerBotones()
     }
     anteriorPinI = pinIzquierdo;
 
+    // Detecto si hay una pulsacion
     if (!pinBaliza && anteriorPinB)
     {
       Serial.println("Boton baliza");
@@ -362,53 +363,76 @@ void leerBotones()
 // Lógica para manejar comandos por puerto serie
 void escucharPuerto()
 {
-  if (datoRecibidoCompleto)
+  /*//Escucho el puerto serie
+datoRecibidoCompleto = false;
+Serial.println("Datos del puerto");
+*/
+
+  leerEntradas();
+
+  if (guinho.equals(textoDerecha))
   {
-    datoRecibidoCompleto = false;
-    Serial.println("Datos del puerto");
+    Serial.println("Luz derecha");
+    gDerecho = 1;
+    gIzquierdo = 0;
+    baliza = 0;
+    guinhoActual = textoDerecha;
+    anteriorGuinho = millis();
+    return;
+  }
 
-    if (guinho.equals(textoDerecha))
-    {
-      Serial.println("Luz derecha");
-      gDerecho = 1;
-      gIzquierdo = 0;
-      baliza = 0;
-      guinhoActual = textoDerecha;
-      anteriorGuinho = millis();
-      return;
-    }
+  if (guinho.equals(textoIzquierda))
+  {
+    Serial.println("Luz izquierda");
+    gIzquierdo = 1;
+    gDerecho = 0;
+    baliza = 0;
+    guinhoActual = textoIzquierda;
+    anteriorGuinho = millis();
+    return;
+  }
 
-    if (guinho.equals(textoIzquierda))
-    {
-      Serial.println("Luz izquierda");
-      gIzquierdo = 1;
-      gDerecho = 0;
-      baliza = 0;
-      guinhoActual = textoIzquierda;
-      anteriorGuinho = millis();
-      return;
-    }
+  if (guinho.equals(textoBaliza))
+  {
+    Serial.println("Baliza encendida");
+    baliza = 1;
+    gIzquierdo = 0;
+    gDerecho = 0;
+    guinhoActual = textoBaliza;
+    anteriorGuinho = millis();
+    return;
+  }
 
-    if (guinho.equals(textoBaliza))
-    {
-      Serial.println("Baliza encendida");
-      baliza = 1;
-      gIzquierdo = 0;
-      gDerecho = 0;
-      guinhoActual = textoBaliza;
-      anteriorGuinho = millis();
-      return;
-    }
+  if (guinho == textoApagado)
+  {
+    baliza = 0;
+    gIzquierdo = 0;
+    gDerecho = 0;
+    guinhoActual = textoApagado;
+    anteriorGuinho = millis();
+    return;
+  }
+}
 
-    if (guinho == textoApagado)
-    {
-      baliza = 0;
-      gIzquierdo = 0;
-      gDerecho = 0;
-      guinhoActual = textoApagado;
-      anteriorGuinho = millis();
-      return;
-    }
+// Lee las entradas digitales
+void leerEntradas()
+{
+  int inDerecho = digitalRead(INDERECHA);
+  int inIzquierdo = digitalRead(INIZQUIERDA);
+  //Serial.println("Leer entradas");
+  if (inDerecho)
+  {
+    guinho = textoDerecha;
+  }
+
+  if (inIzquierdo)
+  {
+    guinho = textoIzquierda;
+  }
+
+  if (inDerecho & inIzquierdo)
+  {
+    guinho = textoBaliza;
   }
 }
 
@@ -421,6 +445,8 @@ void setearLuces()
 
     if (gDerecho)
     {
+      digitalWrite(OUTDERECHA, HIGH);
+      digitalWrite(OUTIZQUIERDA, LOW);
       derecho = !derecho;
       izquierdo = 0;
       return;
@@ -428,6 +454,8 @@ void setearLuces()
 
     if (gIzquierdo)
     {
+      digitalWrite(OUTDERECHA, LOW);
+      digitalWrite(OUTIZQUIERDA, HIGH);
       izquierdo = !izquierdo;
       derecho = 0;
       return;
@@ -435,6 +463,8 @@ void setearLuces()
 
     if (baliza)
     {
+      digitalWrite(OUTDERECHA, HIGH);
+      digitalWrite(OUTIZQUIERDA, HIGH);
       derecho = !derecho;
       izquierdo = derecho;
       return;
@@ -442,6 +472,8 @@ void setearLuces()
 
     // Si no hay pulsadores activados ni comando en guinho
     // guinhoActual = "";
+    digitalWrite(OUTDERECHA, LOW);
+    digitalWrite(OUTIZQUIERDA, LOW);
     derecho = 0;
     izquierdo = 0;
     baliza = 0;

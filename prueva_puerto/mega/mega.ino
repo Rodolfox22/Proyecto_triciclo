@@ -12,11 +12,12 @@ void setup()
 void loop()
 {
   if (Serial1.available())
-  { // Si hay datos en Serial1
+  { 
+    // Si hay datos en Serial1
     inicio = millis();
     static int contador = 0;
     palabraRecibida = Serial1.readString(); // Leer la palabra enviada
-    contador++;                                    // Incrementar el contador
+    contador++;
 
     // Mostrar la palabra y el número en el Serial (consola)
     texto_completo = "\nRecibido: ";

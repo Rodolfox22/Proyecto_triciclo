@@ -25,6 +25,7 @@ let giroDer, giroIz, alarma, hTemp, lBat;
 let envioJS = {};
 let objetoWakeLock = null;
 let comunicacionOk = false;
+let respuestaAnterior = TEXTOAPAGADO;
 
 window.onload = inicio;
 
@@ -39,17 +40,17 @@ function inicio() {
   giroDer.onclick = function () {
     guinhos(TEXTODERECHA);
     //verAlarma.highTemp = !verAlarma.highTemp;
-    console.log(verAlarma);
+    //console.log(verAlarma);
   };
   giroIz.onclick = function () {
     guinhos(TEXTOIZQUIERDA);
     //verAlarma.lowBat = !verAlarma.lowBat;
-    console.log(verAlarma);
+    //console.log(verAlarma);
   };
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
   };
-  
+
   //Todo: crear baliza implementando una pagina nueva que quede sobre la pantalla indicando las alarmas disponibles, implementar un boton para desactivar alarmas, crear un instructivo para decir que hacer con la alarma
 
   alarma.onclick = function () {
@@ -67,6 +68,7 @@ function inicio() {
     verAlarma.lowBat = !verAlarma.lowBat;
     console.log("Alarma bateria");
   };
+  envioJS.guinho = TEXTOAPAGADO;
 }
 
 //Tareas de sincronizacion
@@ -75,7 +77,8 @@ setInterval(function () {
   pruevaVisualizacion();
   actualizar();
   actualizaHora();
-}, 5000);
+  //console.log(envioJS.guinho);
+}, 1000);
 
 function solicitud() {
   var xhr = new XMLHttpRequest();
@@ -95,14 +98,19 @@ function solicitud() {
     if (this.readyState == 4 && this.status == 200) {
       // La solicitud se completó correctamente
       const respuesta = this.response;
-      console.log("Respuesta del servidor: " + respuesta);
+      //console.log("Respuesta del servidor: " + respuesta);
       console.log(respuesta);
-      
-      lectura[buscarLectura("velocidad")][1] = respuesta;
+
+      //lectura[buscarLectura("velocidad")][1] = respuesta;
+
+      if (respuestaAnterior != respuesta) {
+        guinhos(respuesta);
+      }
+
+      respuestaAnterior = respuesta;
 
       //Procesa los datos Json
       //procesarDatos(respuesta);
-    
     } else {
       // Hubo un error en la solicitud
       console.error("Error en la solicitud:", this.status);
@@ -171,12 +179,14 @@ function reinicioTrip() {
 
 //Logica para determinar si se encienden los guiños
 function guinhos(orden) {
+  //Si recibo 2 veces seguidas la misma orden, se apaga el guiño
   if (numGuinho == GUINHO.indexOf(orden)) {
     orden = TEXTOAPAGADO;
   }
+
   numGuinho = GUINHO.indexOf(orden);
   envioJS.guinho = orden;
-  console.log(envioJS);
+  console.log(`Orden: ${orden}`);
 }
 
 setInterval(function () {

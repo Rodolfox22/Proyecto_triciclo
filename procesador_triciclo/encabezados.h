@@ -18,23 +18,29 @@
 #define PINCONTADOR 3
 #define PINSD 53
 
+// Entradas-salidas bus paralelo
+#define INDERECHA 28
+#define INIZQUIERDA 32
+#define OUTDERECHA 38
+#define OUTIZQUIERDA 42
+
 // Diametro de la rueda en dm
 #define RUEDA 400
 #define MUESTRAS 20
 
 void contadorPulsos();
-void serialEvent();
-void datosRecibidos(String datos);
+void datosRecibidos(String &datos);
 void enviarDatos();
 void loguearDatos();
 void imprimirEnSD(String &dato);
 void guardarOdometro(String &logActual);
 int buscarEnSD(String &variableBuscada);
-int calcularVelocidad(int pulsosPorVuelta);
+int calcularVelocidad();
 void calcularDistancia();
 String prepararDatosSD();
 void leerBotones();
 void escucharPuerto();
+void leerEntradas();
 void setearLuces();
 void encender();
 void recuperarDatos();
@@ -143,4 +149,8 @@ void inicializar()
   pinMode(PINLDERECHO, OUTPUT);
   pinMode(PINLIZQUIERDO, OUTPUT);
   pinMode(PINCARGABAT, INPUT);
+  pinMode(OUTDERECHA, OUTPUT);
+  pinMode(OUTIZQUIERDA, OUTPUT);
+  pinMode(INDERECHA, INPUT);
+  pinMode(INIZQUIERDA, INPUT);
 }

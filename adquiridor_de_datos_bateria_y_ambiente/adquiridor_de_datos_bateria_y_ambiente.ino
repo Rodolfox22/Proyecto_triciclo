@@ -134,7 +134,7 @@ void loop() //------------------------------------------------------------------
 
     if (isnan(humedad_ambiente) || isnan(temperatura_ambiente))
     {
-      Serial.println("falla en lectura sensor DHT22!");
+      //Serial.println("falla en lectura sensor DHT22!");
       return;
     }
 
