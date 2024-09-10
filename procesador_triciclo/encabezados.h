@@ -2,16 +2,16 @@
 #define TIEMPODISTANCIA 1000 // refresco de datos de velocidad y distancia
 #define TIEMPOGUINHO 50      // refresco de datos de lectura de botones
 #define TIEMPODESTELLO 300   // tiempo de destello de guiños
-//Luces
+// Luces
 #define PINLDERECHO 2
 #define PINLIZQUIERDO 4
 
-//Botones
+// Botones
 #define PINGDERECHO 5
 #define PINBALIZA 6
 #define PINGIZQUIERDO 7
 
-//Sensores
+// Sensores
 #define PINDS18B20 A2
 #define PINDHT A1
 #define PINCARGABAT A0
@@ -49,7 +49,7 @@ int trip = 0;             // OK
 int odometro = 432;       // OK
 float temp_bat = 25.4;    // temperatura_ok
 int carga = 80;           // porcentaje_carga
-float distanciaTotal=0;
+float distanciaTotal = 0;
 
 // Desarrollo en metros
 float desarrollo_m = float(RUEDA) * PI / float(1000.0);
@@ -102,7 +102,7 @@ int cicloJS = 0;
 
 void inicializar()
 {
-   ////////////RTC////////////
+  ////////////RTC////////////
   Wire.begin();
   RTC.begin();
   if (!RTC.isrunning())
@@ -121,7 +121,6 @@ void inicializar()
   while (true)
     continue;
   */
-  
 
   ////////////SD////////////
   Serial.print("Inicializando tarjeta SD...");
