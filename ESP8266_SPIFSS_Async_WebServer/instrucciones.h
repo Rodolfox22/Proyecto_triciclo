@@ -7,8 +7,10 @@
 // temperatura bateria    lectura[5] "temp_bat"     "/TEMPBAT"
 // Carga batería          lectura[6] "carga"        "/CARGA"
 
-#define MYPORT_TX D7
-#define MYPORT_RX D6
+#define MYPORT_RX D5
+#define MYPORT_TX D6
+
+SoftwareSerial espSerial(MYPORT_RX, MYPORT_TX);
 
 /*
 const char *ssid = "UNRaf_Libre";
@@ -39,7 +41,8 @@ int carga = 85;
 String datosJson = "";
 String datoSerie = "";
 
+int conteo = 0;
+
 void servidor();
-String processor(const String &var);
 void modoAP();
 void modoSTA();

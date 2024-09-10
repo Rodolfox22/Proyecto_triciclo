@@ -19,7 +19,7 @@ void setup()
   ////////////SERIAL////////////
   // Serial.setTimeout(10);
   Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial1.begin(115200);
 
   inicializar();
   inicializarLecturas();
@@ -30,6 +30,7 @@ void loop()
 {
   lecturasSensores();
   actualizarSensores();
+  crearJson();
   calcularDistancia();
   loguearDatos();
 
@@ -37,6 +38,7 @@ void loop()
   setearLuces();
 
   enviarDatos();
+  // visualizaI2C();
 }
 
 // Cada vez que tengo una interrupcion llamo a esta funcion y me devuelve la cantidad de microsegundo que hay entre pulso y pulso
@@ -68,7 +70,7 @@ void datosRecibidos(String datos)
     Serial.println(cicloJS);*/
 }
 
-void serialEvent()
+void leerServidor()
 {
   String datosJS;
   if (Serial1.available())
@@ -82,7 +84,6 @@ void serialEvent()
     while (Serial1.available())
     {
       Serial1.read();
-      datoInicial = false;
     }
     datoESP8266Completo = true;
     datoRecibidoCompleto = true;
@@ -104,40 +105,37 @@ void serialEvent()
   }
 }
 
+void crearJson()
+{
+  StaticJsonDocument<300> sensoresJson;
+
+  // TODO: trabajar en la recepcion de la hora desde la página
+  sensoresJson["humedad"] = humedad;
+  sensoresJson["temperatura"] = temperatura;
+  sensoresJson["velocidad"] = velocidad;
+  sensoresJson["trip"] = trip;
+  sensoresJson["odometro"] = odometro;
+  sensoresJson["temp_bat"] = temp_bat;
+  sensoresJson["carga"] = carga;
+  sensoresJson["guinho"] = guinhoActual;
+
+  serializeJson(sensoresJson, valoresJson);
+}
+
 // Convierte en una palabra los datos recibidos
 void enviarDatos()
 {
-  // Mientras no recibe datos, envía cada cierto tiempo una pregunta al puerto hasta obtener repuesta
-  if (datoInicial)
+  if (Serial1.available())
   {
-    if (millis() - anteriorEnvio <= 5000)
-    {
-      return;
-    }
-    anteriorEnvio = millis();
-  }
+    leerServidor();
 
-  /*if (datoESP8266Completo || datoInicial)
-  {*/
-    String valores;
-    StaticJsonDocument<300> sensoresJson;
-
-    sensoresJson["humedad"] = humedad;
-    sensoresJson["temperatura"] = temperatura;
-    sensoresJson["velocidad"] = velocidad;
-    sensoresJson["trip"] = trip;
-    sensoresJson["odometro"] = odometro;
-    sensoresJson["temp_bat"] = temp_bat;
-    sensoresJson["carga"] = carga;
-    sensoresJson["guinho"] = guinhoActual;
-
-    serializeJson(sensoresJson, valores);
     Serial.println("Json");
-    Serial.println(valores);
+    Serial.println(valoresJson);
+    valoresJson = "";
     //  Se envían los datos al ESP8266
-    Serial1.println(valores);
+    Serial1.println(valoresJson);
     datoESP8266Completo = false;
-  //}
+  }
 }
 
 // Guarda estadísticas y datos importantes en la tarjeta SD
@@ -202,7 +200,7 @@ void imprimirEnSD(String &logActual)
   {
     dataFile.println(logActual);
     dataFile.close();
-    // Serial.println(logActual);
+    Serial.println(logActual);
   }
   else
   {
@@ -467,7 +465,7 @@ void recuperarDatos()
   Serial.println(trip);
 }
 
-// Setea los valores de variables para que estén disponibles a la hora de la transmisión de datos
+// Setea los valores de variables para que estén disponibles al momento de la transmisión de datos
 void actualizarSensores()
 {
   humedad = humedad_ambiente;
@@ -500,6 +498,16 @@ String valorGuinho(int variable, const String &texto)
     return texto;
   }
   return textoApagado;
+}
+
+// Solo para depuración
+void visualizaI2C()
+{
+  if (valoresJson.length() > 0)
+  {
+    Serial.println("Datos recibidos: " + valoresJson);
+    valoresJson = ""; // Limpiar el buffer después de procesar
+  }
 }
 
 // Temperatura ambiente   lectura[0]

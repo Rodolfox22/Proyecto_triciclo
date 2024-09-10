@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <FS.h>
+#include <SoftwareSerial.h>
 
 #include "instrucciones.h"
 
@@ -9,6 +10,7 @@ AsyncWebServer server(80);
 void setup()
 {
   Serial.begin(9600);
+  espSerial.begin(115200);
   tiempo_anterior = millis();
 
   if (!SPIFFS.begin())
@@ -50,32 +52,49 @@ void servidor()
   server.on("/main.js", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(SPIFFS, "/main.js", "text/js"); });
 
-  server.on("/ACTUALIZAR", HTTP_GET, [](AsyncWebServerRequest *request)
+  server.on("/ENVIAR", HTTP_POST, [](AsyncWebServerRequest *request)
             {
-    //Serial.println("Leyendo puerto serie");
+    if (request->hasParam("data", true)) {   // Verifica si hay un parámetro 'data' en el cuerpo de la solicitud
+      AsyncWebParameter* p = request->getParam("data", true);  // Obtener el parámetro enviado con el nombre 'data'
+      String dataRecibida = p->value();  // Almacenar los datos recibidos
+      
+      // Escribir los datos recibidos en el puerto serie
+      espSerial.println(dataRecibida);
+      Serial.println("Datos recibidos desde el cliente: " + dataRecibida);
+      
+      /*      //Espera respuesta del puerto serie
+      unsigned long startMillis = millis();
+      while (!espSerial.available())
+      {
+       if (millis() - startMillis > 2000) {  // Timeout de 2 segundos
+        request->send(500, "text/plain", "Error: No se recibió respuesta en el tiempo esperado.");
+        return;  // Salir del manejador si no hay respuesta
+      }
+      }
+      */
 
-  if (Serial.available()) 
-  {
-    datoSerie = Serial.readString();
-    while (Serial.available()) {
-      Serial.read();
+    // Leer la respuesta del puerto serie
+    //String respuesta = espSerial.readString();
+
+    // Lineas para saber si funciona la llamada al servidor
+    conteo++;
+    if (conteo>99)
+    {
+      conteo=0;
     }
+    
+    String respuesta = String(conteo);
 
-    //Datos simulados para pruevas
-    /*datoSerie="{\"humedad\":76.2,\"temperatura\":22.5,\"velocidad\":7,\"trip\":0,\"odometro\":0,\"temp_bat\":22.25,\"carga\":0,\"guinho\":\"derecha\"}";*/
-
-    request->send(200, "text/plain", datoSerie); // Devolver datos
-  } else {
-    //Serial.println("No es posible recibir datos desde el puerto Serial");
-    datoSerie="Error al procesar la solicitud";
-    request->send(500, "text/plain", "Error al procesar la solicitud");
-  } });
-
-  server.on("/ENVIAR", HTTP_POST, [](AsyncWebServerRequest *request) {
-    datosJson = request->getParam("plain")->value();
-    Serial.write(datosJson.c_str(), datosJson.length());
-    request->send(201, "text/plain", "Datos recibidos correctamente");
-  });
+    if (respuesta.length() > 0) {
+      // Enviar la respuesta del dispositivo conectado al cliente
+      request->send(200, "text/plain", respuesta);
+    } else {
+      request->send(500, "text/plain", "Error: Respuesta vacía del dispositivo.");
+    }
+    } else {
+      // Si no se recibe el parámetro 'data'
+      request->send(400, "text/plain", "Falta el parámetro 'data'.");
+    } });
 
   server.begin();
 }
@@ -106,7 +125,7 @@ void modoSTA()
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(1000);
-    //Serial.println("Connecting to WiFi..");
-    //Serial.println(WiFi.localIP());
+    // Serial.println("Connecting to WiFi..");
+    // Serial.println(WiFi.localIP());
   }
 }

@@ -49,6 +49,7 @@ function inicio() {
   document.getElementById("velocidad").onclick = function () {
     guinhos(TEXTOBALIZA);
   };
+  
   //Todo: crear baliza implementando una pagina nueva que quede sobre la pantalla indicando las alarmas disponibles, implementar un boton para desactivar alarmas, crear un instructivo para decir que hacer con la alarma
 
   alarma.onclick = function () {
@@ -68,66 +69,48 @@ function inicio() {
   };
 }
 
+//Tareas de sincronizacion
 setInterval(function () {
-  solicitud("/ACTUALIZAR");
+  solicitud();
   pruevaVisualizacion();
   actualizar();
-  enviar();
   actualizaHora();
 }, 5000);
 
-function solicitud(url) {
-  var xhttp = new XMLHttpRequest();
+function solicitud() {
+  var xhr = new XMLHttpRequest();
 
-  xhttp.onreadystatechange = function () {
+  xhr.open("POST", "/ENVIAR", true);
+  xhr.setRequestHeader(
+    "Content-Type",
+    "application/x-www-form-urlencoded; charset=UTF-8"
+  );
+  // Convertir el objeto JavaScript a una cadena JSON
+  const jsonData = JSON.stringify(envioJS);
+
+  const urlEncodedData = "data=" + encodeURIComponent(jsonData);
+
+  // Configurar el controlador de eventos para la carga
+  xhr.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      try {
-        const respuesta = this.responseText;
-        procesarDatos(respuesta);
-        console.log(respuesta);
-        comunicacionOk = true;
-      } catch (error) {
-        const respuestaError = this.responseText;
-        console.log(respuestaError);
-        console.error("Error al analizar JSON:", error);
-      }
+      // La solicitud se completó correctamente
+      const respuesta = this.response;
+      console.log("Respuesta del servidor: " + respuesta);
+      console.log(respuesta);
+      
+      lectura[buscarLectura("velocidad")][1] = respuesta;
+
+      //Procesa los datos Json
+      //procesarDatos(respuesta);
+    
     } else {
+      // Hubo un error en la solicitud
       console.error("Error en la solicitud:", this.status);
     }
   };
-  xhttp.open("GET", url, true);
-  xhttp.send();
-  console.log(xhttp);
-}
 
-function enviar() {
-  if (comunicacionOk) {
-    setTimeout(() => {
-      var xhr = new XMLHttpRequest();
-
-      xhr.open("POST", "/ENVIAR", true);
-      xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-      // Convertir el objeto JavaScript a una cadena JSON
-      const jsonData = JSON.stringify(envioJS);
-
-      // Configurar el controlador de eventos para la carga
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 201) {
-          // La solicitud se completó correctamente
-
-          console.log("Texto: " + this.responseText);
-          console.log(this.response);
-        } else {
-          // Hubo un error en la solicitud
-          console.error("Error en la solicitud:", this.status);
-        }
-      };
-
-      // Enviar la solicitud con los datos JSON
-      xhr.send(jsonData);
-    }, 200);
-    comunicacionOk = false;
-  }
+  // Enviar la solicitud con los datos JSON
+  xhr.send(urlEncodedData);
 }
 
 function pruevaVisualizacion() {
@@ -178,7 +161,6 @@ function procesarDatos(texto) {
 }
 
 /* Funcionalidad dinamica*/
-
 function reinicioTrip() {
   trip = odometro;
   lectura[buscarLectura("trip")][1] = trip;

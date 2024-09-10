@@ -126,6 +126,7 @@ void lecturasSensores() //------------------------------------------------------
 
   if (millis() - tiempoUltimaLectura_1 > retardo_1) // delay de encendido realizado con millis para no clavar el micro
   {
+      tiempoUltimaLectura_1 = millis(); 
 
     //--------- bucle Lectura del Sensor humedad-----------------------------------------------------
     humedad_ambiente = dht.readHumidity();        // Leemos la Humedad
@@ -168,7 +169,6 @@ void lecturasSensores() //------------------------------------------------------
     h = humedad_ambiente;     // humedad ambiente
     T = temperatura_ambiente; // temperatura ambiente
 
-    tiempoUltimaLectura_1 = millis(); // actualizamos el tiempo de la última lectura
   }
 
 } 

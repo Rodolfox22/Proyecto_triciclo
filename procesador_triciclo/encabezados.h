@@ -40,6 +40,8 @@ void encender();
 void recuperarDatos();
 void verOdometro();
 String valorGuinho(int variable, const String &texto);
+void crearJson();
+void leerServidor();
 
 // Temperatura ambiente, Humedad, Velocidad, Trip, Odometro, temperatura bateria, Carga batería
 float humedad = 80;       // humedad_ambiente
@@ -70,7 +72,6 @@ int izquierdo = 0;
 int baliza = 0;
 
 bool reloj = false;
-bool datoInicial = true;
 
 const int chipSelect = PINSD; // SD
 String dataString = ".";      // DATO
@@ -78,6 +79,8 @@ String inputString = "";
 String lecturas = "";
 bool datoRecibidoCompleto = false;
 bool datoESP8266Completo = false;
+
+String valoresJson = "";
 
 // Promedio dato
 int n_muestras = 20;
@@ -140,6 +143,4 @@ void inicializar()
   pinMode(PINLDERECHO, OUTPUT);
   pinMode(PINLIZQUIERDO, OUTPUT);
   pinMode(PINCARGABAT, INPUT);
-  
-  
 }
